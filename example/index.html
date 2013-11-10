@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <body>
+  <script src="d3.js"></script>
+  <script src="../d33d.js"></script>
+  <script>
+// will take as input, x, y, and z scales, which default to 1 -> 1, 1 -> 1, 1 -> 1
+
+var p = d33d.projection.perspective() //.x(x).y(y)
+
+p.camera().pos([0,0,10]).lookAt([0,0,0]).focal(25)
+
+var scale = d3.scale.linear().domain([0, 1]).range([300, 600])
+
+var box = generateBox(10, 2)
+
+function generateBox(n, width){
+  var s = width / (n - 1), t = width / 2
+  var points = []
+  for(var x = 0; x < n; x++){
+    for(var y = 0; y < n; y++){
+      for(var z = 0; z < n; z++){
+        points.push([x * s - t, y * s - t, z * s - t])
+      }
+    }
+  }
+  return points
+}
+
+var svg = d3.select('body').append('svg')
+
+svg.selectAll('circle').data(box)
+  .enter().append('circle')
+  .attr('cx', function(d){ return scale(p.x(d)) })
+  .attr('cy', function(d){ return scale(p.y(d)) })
+  .attr('r', function(d){ return p.scale(3) })
+
+var theta = 0
+var circles = svg.selectAll('circle')
+var r = d33d.rotate, t = d33d.translate
+setInterval(function(){
+  circles.data(t(r(box, theta += 0.01), [0, 0, 0]))
+    .attr('cx', function(d){ return scale(p.x(d)) })
+    .attr('cy', function(d){ return scale(p.y(d)) })
+}, 10)
+
+  </script>
+  </body>
+</html>

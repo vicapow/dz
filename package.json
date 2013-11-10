@@ -1,0 +1,25 @@
+{
+  "name": "d33d",
+  "version": "0.0.1",
+  "description": "provides 3D for D3",
+  "main": "src/index.js",
+  "directories": {
+    "example": "example",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": "",
+  "keywords": [
+    "d3",
+    "3d",
+    "browser"
+  ],
+  "author": "Victor Powell <vicapow@gmail.com>",
+  "license": "BSD",
+  "devDependencies": {
+    "should": "~2.0.2",
+    "mocha": "~1.14.0"
+  }
+}
