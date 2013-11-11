@@ -2,7 +2,7 @@
 
 __WARNING__: this is a _very_ new (and likely unstable) project. use as your own risk.
 
-checkout [this simple demo](http://vicapow.github.io/d33d/example/example2.html)
+checkout [this live demo](http://vicapow.github.io/d33d/example/example2.html)
 
 ## Installation
 
@@ -18,7 +18,7 @@ or, install via npm
 
 ## Example
 
-Here's a simple example. Checkout the [example/example2.html](http://vicapow.github.io/d33d/example/example2.html) for a more complete demo
+Here's a quick sample. Checkout the [example/example2.html](http://vicapow.github.io/d33d/example/example2.html) for a working demo.
 
 ````js
 // create a new projection
