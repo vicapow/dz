@@ -8,16 +8,18 @@
   <script src="../d33d.js"></script>
   <script>
 
-var p = d33d.projection.perspective() //.x(x).y(y)
+var p = d33d.projection.perspective()
   , w = window.innerWidth
   , h = window.innerHeight
+  , svg = d3.select('body').append('svg')
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
-  // screen scale
+  // screen scaling
   , screenX = d3.scale.linear().domain([1, -1]).range([0, max])
   , screenY = d3.scale.linear().domain([-1, 1]).range([-diff/2, max + -diff/2])
 
 var box = generateBox(5, 0.5)
 
+// generate a bunch of points in a cube shape
 function generateBox(n, width){
   var s = width / (n - 1), t = width / 2
   var points = []
@@ -31,32 +33,19 @@ function generateBox(n, width){
   return points
 }
 
-var svg = d3.select('body').append('svg')
-  , theta = 0
-  , x = 0
-  , y = 0
-  , z = 0
-  , s = 1
-  , f = 1
-  , r = 20
-
-p.camera().lookAt([0, 0, 0]).focalLength(f)
-
 function transform(box, t){
   data = box.map(function(p){ return p.slice(0) }) // copy points
-  data = d33d.scale(data,[s, s, s])
   data = data.map(d33d.matrix().rotateX(t).multiVector)
   data = data.map(d33d.matrix().rotateY(t).multiVector)
   data = data.map(d33d.matrix().rotateZ(t).multiVector)
-  data = d33d.translate(data, [x, y, z])
   return data
 }
 
 svg.selectAll('circle').data(transform(box, 0))
   .enter().append('circle')
-  // color the circles according to the axis
+  // color the circles according to their axis
   .attr('fill', function(d, i){
-    d = box[i] // get original coords
+    d = box[i] // get original coordinates
     // origin
     if(d[0] === 0 && d[1] === 0 && d[2] === 0) return 'purple'
     // x axis
@@ -76,9 +65,7 @@ d3.timer(function(t){
   circles.data(transform(box, t)).sort(function(a, b){ return p.depth(a) - p.depth(b) })
     .attr('cx', function(d){ return screenX(p.x(d)) })
     .attr('cy', function(d){ return screenY(p.y(d)) })
-    .attr('r', function(d){ 
-      return p.scale(d) * r
-    })
+    .attr('r', function(d){ return p.scale(d) * 20 })
 })
 
   </script>
