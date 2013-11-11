@@ -5,10 +5,10 @@
   </style>
   <body>
   <script src="d3.js"></script>
-  <script src="../d33d.js"></script>
+  <script src="../ind33d.js"></script>
   <script>
 
-var p = d33d.projection.perspective() //.x(x).y(y)
+var p = ind33d.projection.perspective() //.x(x).y(y)
   , w = window.innerWidth
   , h = window.innerHeight
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
@@ -44,11 +44,11 @@ p.camera().lookAt([0, 0, 0]).focalLength(f)
 
 function transform(box, t){
   data = box.map(function(p){ return p.slice(0) }) // copy points
-  data = d33d.scale(data,[s, s, s])
-  data = data.map(d33d.matrix().rotateX(t).multiVector)
-  data = data.map(d33d.matrix().rotateY(t).multiVector)
-  data = data.map(d33d.matrix().rotateZ(t).multiVector)
-  data = d33d.translate(data, [x, y, z])
+  data = ind33d.scale(data,[s, s, s])
+  data = data.map(ind33d.matrix().rotateX(t).multiVector)
+  data = data.map(ind33d.matrix().rotateY(t).multiVector)
+  data = data.map(ind33d.matrix().rotateZ(t).multiVector)
+  data = ind33d.translate(data, [x, y, z])
   return data
 }
 

@@ -1,18 +1,18 @@
-!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.d33d=e():"undefined"!=typeof global?global.d33d=e():"undefined"!=typeof self&&(self.d33d=e())}(function(){var define,module,exports;
+!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.ind33d=e():"undefined"!=typeof global?global.ind33d=e():"undefined"!=typeof self&&(self.ind33d=e())}(function(){var define,module,exports;
 return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-d33d = { projection: {} }
+var ind33d = { projection: {} }
 
-d33d.matrix = require('./matrix')
-d33d.vector = require('./vector')
-d33d.projection = require('./projection')
+ind33d.matrix = require('./matrix')
+ind33d.vector = require('./vector')
+ind33d.projection = require('./projection')
 
-d33d.translate = function(points, delta){
+ind33d.translate = function(points, delta){
   return points.map(function(p){
     return [p[0] + delta[0], p[1] + delta[1], p[2] + delta[2]]
   })
 }
 
-d33d.rotate = function(points, theta){
+ind33d.rotate = function(points, theta){
   return points.map(function(p){
     return [ 
       p[0] * Math.cos(theta) - p[2] * Math.sin(theta) 
@@ -22,13 +22,13 @@ d33d.rotate = function(points, theta){
   })
 }
 
-d33d.scale = function(points, scale){
+ind33d.scale = function(points, scale){
   return points.map(function(p){
     return [ p[0] * scale[0], p[1] * scale[1], p[2] * scale[2] ]
   })
 }
 
-module.exports = d33d
+module.exports = ind33d
 },{"./matrix":2,"./projection":3,"./vector":4}],2:[function(require,module,exports){
 var vector = require('./vector')
 
