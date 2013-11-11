@@ -16,13 +16,7 @@ var p = d33d.projection.perspective() //.x(x).y(y)
   , screenX = d3.scale.linear().domain([1, -1]).range([0, max])
   , screenY = d3.scale.linear().domain([-1, 1]).range([-diff/2, max + -diff/2])
 
-var box = generateBox(5, 0.5).filter(function(p){
-  return true
-  // if(p[1] === 0 && p[2] === 0) return true // x axis
-  // if(p[0] === 0 && p[2] === 0) return true // y axis
-  // if(p[0] === 0 && p[1] === 0) return true // z axis
-  // return false
-})
+var box = generateBox(7, 0.5)
 
 function generateBox(n, width){
   var s = width / (n - 1), t = width / 2
@@ -39,32 +33,28 @@ function generateBox(n, width){
 
 var svg = d3.select('body').append('svg')
   , theta = 0
-  , rotate = d33d.rotate
-  , translate = d33d.translate
-  , matrix = d33d.matrix
-  , scale = d33d.scale
-  , t = 100
   , x = 0
   , y = 0
   , z = 0
-  , s = 5
+  , s = 1
   , f = 1
   , r = 20
 
-p.camera().position([0, 0, 40]).lookAt([0, 0, 0]).focalLength(f)
+p.camera().lookAt([0, 0, 0]).focalLength(f)
 
-function transform(box){
+function transform(box, t){
   data = box.map(function(p){ return p.slice(0) }) // copy points
-  data = scale(data,[s, s, s])
-  data = data.map(matrix().rotateX(t).multiVector)
-  data = data.map(matrix().rotateY(t).multiVector)
-  data = data.map(matrix().rotateZ(t).multiVector)
-  data = translate(data, [x, y, z])
+  data = d33d.scale(data,[s, s, s])
+  data = data.map(d33d.matrix().rotateX(t).multiVector)
+  data = data.map(d33d.matrix().rotateY(t).multiVector)
+  data = data.map(d33d.matrix().rotateZ(t).multiVector)
+  data = d33d.translate(data, [x, y, z])
   return data
 }
 
-svg.selectAll('circle').data(transform(box))
+svg.selectAll('circle').data(transform(box, 0))
   .enter().append('circle')
+  // color the circles according to the axis
   .attr('fill', function(d, i){
     d = box[i] // get original coords
     // origin
@@ -80,9 +70,11 @@ svg.selectAll('circle').data(transform(box))
 
 var circles = svg.selectAll('circle')
 d3.timer(function(t){
-  t = t / 1000
-  p.camera().focalLength(t).position([0, 0, t])
-  var data = transform(box)
+  var t = t / 10000
+    , data = transform(box, t)
+    , end = 100, f = end - t
+  if(f < 1) f = 1
+  p.camera().focalLength(f).position([0, 0, 100])
   circles.data(data).sort(function(a, b){ return p.depth(a) - p.depth(b) })
     .attr('cx', function(d){ return screenX(p.x(d)) })
     .attr('cy', function(d){ return screenY(p.y(d)) })

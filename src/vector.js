@@ -14,7 +14,7 @@ var vector = module.exports = function(array3){
   }
 
   // subtract vectors
-  v.sub = function(v){
+  v.minus = function(v){
     v = array(v)
     x -= v[0]
     y -= v[1]
@@ -45,16 +45,21 @@ var vector = module.exports = function(array3){
   }
 
   v.x = function(s){ 
-    if(arguments.length) return x = s
-    else return this
+    if(!arguments.length) return x;
+    x = s; return this
   }
   v.y = function(s){ 
-    if(arguments.length) return y = s
-    else return this
+    if(!arguments.length) return y
+    y = s; return this
   }
   v.z = function(s){ 
-    if(arguments.length) return z = s
-    else return this
+    if(!arguments.length) return z
+    z =s ; return this
+  }
+
+  v.scale = function(s){
+    x = x * s; y = y * s; z = z * s
+    return this
   }
 
   v.length = function(){ return Math.sqrt( x * x + y * y + z * z) }

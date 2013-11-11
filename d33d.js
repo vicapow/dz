@@ -7,13 +7,13 @@ d33d.vector = require('./vector')
 d33d.projection = require('./projection')
 
 d33d.translate = function(points, delta){
-  return points.slice(0).map(function(p){
+  return points.map(function(p){
     return [p[0] + delta[0], p[1] + delta[1], p[2] + delta[2]]
   })
 }
 
 d33d.rotate = function(points, theta){
-  return points.slice(0).map(function(p){
+  return points.map(function(p){
     return [ 
       p[0] * Math.cos(theta) - p[2] * Math.sin(theta) 
       , p[1]
@@ -22,10 +22,17 @@ d33d.rotate = function(points, theta){
   })
 }
 
+d33d.scale = function(points, scale){
+  return points.map(function(p){
+    return [ p[0] * scale[0], p[1] * scale[1], p[2] * scale[2] ]
+  })
+}
+
 module.exports = d33d
 },{"./matrix":2,"./projection":3,"./vector":4}],2:[function(require,module,exports){
 var vector = require('./vector')
-var matrix = module.exports = function(array4x4){
+
+var matrix = module.exports = function(m){
 
   /** of the form:
     * [ [1, 0, 0, tx]
@@ -34,13 +41,13 @@ var matrix = module.exports = function(array4x4){
     * , [0, 0, 0, 1]]
     */
 
-  var m = {} // the matrix object
+  var matrix = {} // the matrix object
   
   // borrowed heavily from: 
   // https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
-  m.multi = function(m1){
+  matrix.multi = function(m1){
     if(!(m1 instanceof Array)) m1 = m1.array()
-    var ae = array4x4 // this array
+    var ae = m // this array
     var be = m1 // the other array
 
     var a11 = ae[0][0], a12 = ae[0][1], a13 = ae[0][2],  a14 = ae[0][3]
@@ -73,93 +80,127 @@ var matrix = module.exports = function(array4x4){
     ae[3][2] = a41 * b13 + a42 * b23 + a43 * b33 + a44 * b43
     ae[3][3] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44
 
-    return this // make chain-able
+    return matrix // make chain-able
+  }
+
+  // turn the matrix into a purely rotation matrix along the x axis
+  // based on
+  // https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js#L730
+  matrix.rotateX = function(theta){
+    if(!theta) theta = 0
+    var c = Math.cos(theta), s = Math.sin(theta)
+    m = [
+        [1, 0, 0, 0]
+      , [0, c, s, 0]
+      , [0, -s, c, 0]
+      , [0, 0, 0, 1]
+    ]
+    return matrix
+  }
+
+  // turn the matrix into a purely rotation matrix along the y axis
+  matrix.rotateY = function(theta){
+    if(!theta) theta = 0
+    var c = Math.cos(theta), s = Math.sin(theta)
+    m = [
+        [c, 0, -s, 0]
+      , [0, 1, 0, 0]
+      , [s, 0, c, 0]
+      , [0, 0, 0, 1]
+    ]
+    return matrix
+  }
+
+  // turn the matrix into a purely rotation matrix along the z axis
+  matrix.rotateZ = function(theta){
+    if(!theta) theta = 0
+    var c = Math.cos(theta), s = Math.sin(theta)
+    m = [
+        [c, s, 0, 0]
+      , [-s, c, 0, 0]
+      , [0, 0, 1, 0]
+      , [0, 0, 0, 1]
+    ]
+    return matrix
   }
   
   // return the internal array
-  m.array = function(){ return array4x4 }
+  matrix.array = function(){ return m }
 
-  m.position = function(v){
-    var m = array4x4
+  matrix.translate = function(v){
     if(!v) return [ m[0][3], m[1][3], m[2][3] ]
     if(!(v instanceof Array)) v = v.array()
     m[0][3] = v[0]
     m[1][3] = v[1]
     m[2][3] = v[2]
-    return this // make chain-able
+    return matrix // make chain-able
   }
 
-  // unlike three.js, lookAt also sets the position to be `eye`
-  // useful for translating points to camera coordinates
-  // m = lookAt(...).inverse()
-  // m.multiVec(points)
-  m.lookAt = function(eye, target, up){
+  // unlike three.js, our `lookAt` also sets the position to be `eye`
+  // creates a transform that would take a unit camera at (0,0,0) looking
+  // down the -z axis and up along the y axis to the coordinates described
+  // by `eye`, `target` and `up`
+  matrix.lookAt = function(eye, target, up){
     var x = vector()
       , y = vector()
-      , z = vector(eye).sub(target).normalize()
-      , m = array4x4
+      , z = vector(eye).minus(target).normalize()
 
     if(z.length() === 0) z.z(1)
-
     x.cross(up, z).normalize()
 
     if(x.length() === 0){
       z.x(z.x() + 0.0001)
       x.cross(up, z).normalize()
     }
-
     y.cross(z, x)
-
     x = x.array(), y = y.array(), z = z.array()
     m[0][0] = x[0];   m[1][0] =   x[1]; m[2][0] =   x[2]
     m[0][1] = y[0];   m[1][1] =   y[1]; m[2][1] =   y[2]
     m[0][2] = z[0];   m[1][2] =   z[1]; m[2][2] =   z[2]
     m[0][3] = eye[0]; m[1][3] = eye[1]; m[2][3] = eye[2]
 
-    return this // make chain-able
+    return matrix // make chain-able
   }
-
   
-  m.multiVector = function(vec){
-    if(!(vec instanceof Array)) vec = vec.array()
-    var e = array4x4, x = vec[0], y = vec[1], z = vec[2]
-    vec[0] = e[0][0] * x + e[0][1] * y + e[0][2] * z + e[0][3]
-    vec[1] = e[1][0] * x + e[1][1] * y + e[1][2] * z + e[1][3]
-    vec[2] = e[2][0] * x + e[2][1] * y + e[2][2] * z + e[2][3]
-    return vector(vec) // returns a vector object
+  matrix.multiVector = function(vec){
+    vec = vector(vec).array() // copy
+    var x = vec[0], y = vec[1], z = vec[2] // required for temp storage
+    vec[0] = m[0][0] * x + m[0][1] * y + m[0][2] * z + m[0][3]
+    vec[1] = m[1][0] * x + m[1][1] * y + m[1][2] * z + m[1][3]
+    vec[2] = m[2][0] * x + m[2][1] * y + m[2][2] * z + m[2][3]
+    return vec.slice(0) // copy
   }
-  m.multiScalar = function(s){
-    var m = array4x4
+  matrix.multiScalar = function(s){
     m[0][0] *= s; m[0][1] *= s; m[0][2] *= s; m[0][3] *= s
     m[1][0] *= s; m[1][1] *= s; m[1][2] *= s; m[1][3] *= s
     m[2][0] *= s; m[2][1] *= s; m[2][2] *= s; m[2][3] *= s
     m[3][0] *= s; m[3][1] *= s; m[3][2] *= s; m[3][3] *= s
-    return this
+    return matrix
   }
 
-  // se the matrix to be the identity
-  m.identity = function(){
-    array4x4 = [
-      [1, 0, 0, 0]
+  // make identity matrix
+  matrix.identity = function(){
+    m = [ 
+        [1, 0, 0, 0]
       , [0, 1, 0, 0]
       , [0, 0, 1, 0]
       , [0, 0, 0, 1]
     ]
-    return this // make chain-able
+    return matrix
   }
 
-  m.toString = function(){
-    return array4x4[0].toString()
-      + '\n' + array4x4[1].toString()
-      + '\n' + array4x4[2].toString()
-      + '\n' + array4x4[3].toString()
+  matrix.toString = function(){
+    return m[0].toString() + '\n'
+         + m[1].toString() + '\n' 
+         + m[2].toString() + '\n' 
+         + m[3].toString()
   }
 
-  m.inverse = function(){
-    // based on https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
-    var t = array4x4
-
-    var n11 = t[0][0], n12 = t[0][1], n13 = t[0][2], n14 = t[0][3]
+  matrix.inverse = function(){
+    // based on 
+    // https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
+    var t = m
+      , n11 = t[0][0], n12 = t[0][1], n13 = t[0][2], n14 = t[0][3]
       , n21 = t[1][0], n22 = t[1][1], n23 = t[1][2], n24 = t[1][3]
       , n31 = t[2][0], n32 = t[2][1], n33 = t[2][2], n34 = t[2][3]
       , n41 = t[3][0], n42 = t[3][1], n43 = t[3][2], n44 = t[3][3]
@@ -183,75 +224,109 @@ var matrix = module.exports = function(array4x4){
 
     var det = n11 * t[0][0] + n21 * t[0][1] + n31 * t[0][2] + n41 * t[0][3]
 
-    if(det === 0) throw new Error('det=0 for matrix')
+    if(det === 0) throw new Error('det=0 for matrix.inverse()')
 
-    return m.multiScalar(1 / det) // return chain-able ref to `m`
+    return matrix.multiScalar(1 / det) // return chain-able ref to `m`
   }
   
-  // TODO: this should be at the top of the generator
-  if(!array4x4) m.identity() // called without arguments
-  // convert to array if matrix
-  else if(!(array4x4 instanceof Array)) array4x4 = array4x4.array()
-  array4x4 = array4x4.slice(0)
+  if(!m) matrix.identity()
+  else if(!(m instanceof Array)) m = m.array() // convert matrix to array
+  m = m.slice(0) // copy
 
-  return m
+  return matrix
 }
 },{"./vector":4}],3:[function(require,module,exports){
 var projection = module.exports = {}
 
+var matrix = require('./matrix')
+var vector = require('./vector')
+
 projection.perspective = function(){
   // perspective generating function
 
+  // TODO: consider using vector.scale?
   function scale3(vec, scale){
-    return [vec[0] * scale, vec[1] * scale, vec[2] * scale]
+    return [vec[0] * scale, vec[1] * scale, vec[2] * scale] // copy
   }
 
-  var imagePlane = [0, 0, -1]
+  // eye is located at [0, 0, 0]
+  // eye is pointing at [0,0,-1]
 
   // the perspective object
   var perspective = {}
 
   function project(p){
-    var Ax = p[0], Ay = p[1], Az = p[2]
-    var Bz = imagePlane[2]
-    return scale3(p, Bz / Az)
+    camera.transform() // recalculate the transform
+    var ip = i.multiVector(p) /*copy*/, target = [0, 0, f]
+      , Az = ip[2], Bz = target[2]
+    if(Az === 0) Az = 0.00001
+    var ret = scale3(p, Bz / Az)
+    return ret
   }
 
-  perspective.x = function(p){
-    // TODO: produce the x projected value of a 3d point
-    return project(p)[0]
+  perspective.x = function(p){ return project(p)[0] }
+
+  perspective.y = function(p){ return project(p)[1] }
+
+  perspective.depth = function(p){
+    var ip = i.multiVector(p) /*copy*/
+    return ip[2] // how far the point is from the camera
   }
 
-  perspective.y = function(p){
-    // TODO: produce the y projected value of 3d point
-    return project(p)[1]
+  perspective.scale = function(p){
+      var ip = i.multiVector(p) /*copy*/, target = [0, 0, f]
+      , Az = ip[2], Bz = target[2]
+      , scale
+    if(Az === 0) Az = 0.00001
+    scale = Bz / Az
+    if(scale < 0) scale = - scale
+    if(scale === Infinity || scale < 0) scale = 0
+    return scale
   }
 
-  perspective.scale = function(scalar){
-    // TODO: implement scaling
-    return scalar
-  }
-
-
+  // does the camera transform matrix need to be recomputed?
+  var dirty = true
+    , t = matrix()
+    , i = matrix()
+    , f = 1 // focal length
   var camera = (function(){
     // defaults
-    var pos = [0,0,1]
-      , lookAt = [0,0,0]
-      , f = 25
+    var position = [0, 0, 1], lookAt = [0, 0, 0], up = [0, 1, 0]
       , camera = {}
 
-    camera.pos = function(array3){
-      pos = array3
-      return camera
+    camera.position = function(array3){
+      if(!array3) return position.slice(0) // copy
+      dirty = true
+      position = array3.slice(0); return camera
     }
     camera.lookAt = function(array3){
-      lookAt = array3
-      return camera
+      if(!array3) return lookAt.slice(0) // copy
+      dirty = true
+      lookAt = vector(array3).normalize().array(); return camera
     }
-    camera.focal = function(scalar){
-      // TODO
-      f = scalar
-      return camera
+    camera.up = function(array3){
+      if(!array3) return up.slice(0) // copy
+      dirty = true
+      up = array3.slice(0); return camera
+    }
+    camera.focalLength = function(scalar){
+      if(scalar === undefined) return f
+      dirty = true
+      f = scalar; return camera
+    }
+    // the transformation matrix that transforms the unit camera 
+    // (at loc (0,0,0), looking down the -z axis) to the position of this
+    // camera. the inverse of this matrix transform will take world coordinates
+    // and translate them to "film" coordinates
+    // TODO: do we never need to expose this externally?
+    camera.transform = function(){
+      // unit camera points down the -z axis and is positioned at (0,0,0)
+      if(dirty) {
+        t.lookAt(position, lookAt, up)
+        i = matrix(t).inverse()
+      }
+      dirty = false
+      return t
     }
     return camera
   })()
@@ -263,7 +338,7 @@ projection.perspective = function(){
   // create a new perspective
   return perspective
 }
-},{}],4:[function(require,module,exports){
+},{"./matrix":2,"./vector":4}],4:[function(require,module,exports){
 
 var vector = module.exports = function(array3){
   // vector argument
@@ -280,7 +355,7 @@ var vector = module.exports = function(array3){
   }
 
   // subtract vectors
-  v.sub = function(v){
+  v.minus = function(v){
     v = array(v)
     x -= v[0]
     y -= v[1]
@@ -311,16 +386,21 @@ var vector = module.exports = function(array3){
   }
 
   v.x = function(s){ 
-    if(arguments.length) return x = s
-    else return this
+    if(!arguments.length) return x;
+    x = s; return this
   }
   v.y = function(s){ 
-    if(arguments.length) return y = s
-    else return this
+    if(!arguments.length) return y
+    y = s; return this
   }
   v.z = function(s){ 
-    if(arguments.length) return z = s
-    else return this
+    if(!arguments.length) return z
+    z =s ; return this
+  }
+
+  v.scale = function(s){
+    x = x * s; y = y * s; z = z * s
+    return this
   }
 
   v.length = function(){ return Math.sqrt( x * x + y * y + z * z) }

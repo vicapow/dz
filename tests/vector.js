@@ -15,9 +15,10 @@ describe('vector', function(){
   it('should take an optional array to initialize the vector', function(){
     vector([1, 2, 3]).array().should.eql([1, 2, 3])
   })
-  describe('#sub', function(){
-    it('should subtract two vectors', function(){
-      vector([199, 7, 3]).sub([199, 7, 3]).array().should.eql([0, 0, 0])
+  describe('#minus', function(){
+    it('should minus two vectors', function(){
+      vector([199, 7, 3]).minus([199, 7, 3]).array().should.eql([0, 0, 0])
+      vector([0, 0, 0]).minus([3, 5, 2]).array().should.eql([-3, -5, -2])
     })
   })
   describe('#length', function(){
@@ -25,13 +26,19 @@ describe('vector', function(){
       vector([1, 1, 1]).length().should.eql(Math.sqrt(3))
     })
   })
-  describe('cross', function(){
+  describe('#cross', function(){
     it('should produce the vector cross-product', function(){
       vector([1, 0, 0]).cross([0, 1, 0]).array().should.eql([0, 0, 1])
       vector([0, 1, 0]).cross([1, 0, 0]).array().should.eql([0, 0, -1])
     })
     it('should take two arguments', function(){
       vector([0, 0, 0]).cross([1, 0, 0], [0, 1, 0]).array().should.eql([0, 0, 1])
+    })
+  })
+  describe('#scale', function(){
+    it('should scale the vector', function(){
+      vector([1, 1, 1]).scale(23).array().should.eql([23, 23, 23])
+      vector([1, 0, 0]).scale(23).array().should.eql([23, 0, 0])
     })
   })
   describe('#normalize', function(){
