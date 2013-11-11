@@ -18,7 +18,7 @@ or, install via npm
 
 ## Example
 
-Here's a simple example. Checkout the [example2](http://vicapow.github.io/d33d/example/example2.html) for a more complete demo
+Here's a simple example. Checkout the [example/example2.html](http://vicapow.github.io/d33d/example/example2.html) for a more complete demo
 
 ````js
 // create a new projection
