@@ -2,27 +2,27 @@
 
 __WARNING__: this is a _very_ new (and likely unstable) project. use as your own risk.
 
-checkout [this live demo](http://vicapow.github.io/d33d/example/example2.html)
+checkout [this live demo](http://vicapow.github.io/ind33d/example/example2.html)
 
 ## Installation
 
-just download [d33d.js](https://raw.github.com/vicapow/d33d/master/d33d.js) and include it into your HTML
+just download [ind33d.js](https://raw.github.com/vicapow/ind33d/master/ind33d.js) and include it into your HTML
 
 ````html
-  <script src="d33d.js"></script>
+  <script src="ind33d.js"></script>
 ````
 
 or, install via npm
 
-    npm install d33d
+    npm install ind33d
 
 ## Example
 
-Here's a quick sample. Checkout the [example/example2.html](http://vicapow.github.io/d33d/example/example2.html) for a working demo.
+Here's a quick sample. Checkout the [example/example2.html](http://vicapow.github.io/ind33d/example/example2.html) for a working demo.
 
 ````js
 // create a new projection
-var p = d33d.projection.perspective()
+var p = ind33d.projection.perspective()
   // and configure the camera (aka, the "eyeball")
   .camera().position([0, 0, f / 1]).lookAt([0, 0, 0]).focalLength(f)
 // create some 3d data
