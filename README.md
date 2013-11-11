@@ -4,13 +4,21 @@ __WARNING__: this is a _very_ new (and likely unstable) project. use as your own
 
 checkout [this simple demo](http://vicapow.github.io/d33d/example/example2.html)
 
-just download [d33d.js](https://raw.github.com/vicapow/d33d/master/d33d.js) and you're good to go!
+## Installation
+
+just download [d33d.js](https://raw.github.com/vicapow/d33d/master/d33d.js) and include it into your HTML
+
+````html
+  <script src="d33d.js"></script>
+````
 
 or, install via npm
 
     npm install d33d
 
-simple example:
+## Example
+
+Here's a simple example. Checkout the [example2](http://vicapow.github.io/d33d/example/example2.html) for a more complete demo
 
 ````js
 // create a new projection
