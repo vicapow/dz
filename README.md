@@ -1,8 +1,10 @@
-# DZ A simple library for making 3D fun with D3
+# DZ is A simple library for making 3D fun with D3
 
 __WARNING__: this is a _very_ new (and likely unstable) project. use as your own risk.
 
-checkout [this live demo](http://vicapow.github.io/dz/example/example2.html)
+checkout these demos
+  + [ball cube](http://vicapow.github.io/dz/example/dot-matrix.html)
+  + [simple cube](http://vicapow.github.io/dz/example/cube.html)
 
 ## Installation
 
@@ -18,7 +20,7 @@ or, install via npm
 
 ## Example
 
-Here's a quick sample. Checkout the [example/example2.html](http://vicapow.github.io/dz/example/example2.html) for a working demo.
+Here's a quick sample. Checkout [example/dot-matrix.html](http://vicapow.github.io/dz/example/dot-matrix.html) for a working demo.
 
 ````js
 // create a new projection
