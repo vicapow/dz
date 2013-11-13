@@ -3,48 +3,29 @@ var projection = module.exports = {}
 var matrix = require('./matrix')
 var vector = require('./vector')
 
+// perspective creator
 projection.perspective = function(){
-  // perspective generating function
-
-  // TODO: consider using vector.scale?
-  function scale3(vec, scale){
-    return [vec[0] * scale, vec[1] * scale, vec[2] * scale] // copy
-  }
-
-  // eye is located at [0, 0, 0]
-  // eye is pointing at [0,0,-1]
 
   // the perspective object
   var perspective = {}
 
-  function project(p){
+  var project = perspective.project = function(p){
     camera.transform() // recalculate the transform
-    var ip = i.multiVector(p) /*copy*/, target = [0, 0, f]
-      , Az = ip[2], Bz = target[2]
+    // `ip` is the vector of the poin in "camera space" aka, as if the camera
+    // was at (0, 0, 0)
+    var ip = i.multiVector(p) /*copy `p`*/, target = [0, 0, -f]
+      , Az = ip[2], Bz = target[2], scale
     if(Az === 0) Az = 0.00001
-    var ret = scale3(p, Bz / Az)
-    return ret
+    scale = Bz / Az
+    if(scale < 0) scale = 0
+    return [p[0] * scale, p[1] * scale, p[2] * scale, scale]
   }
 
   perspective.x = function(p){ return project(p)[0] }
-
   perspective.y = function(p){ return project(p)[1] }
-
-  perspective.depth = function(p){
-    var ip = i.multiVector(p) /*copy*/
-    return ip[2] // how far the point is from the camera
-  }
-
-  perspective.scale = function(p){
-      var ip = i.multiVector(p) /*copy*/, target = [0, 0, f]
-      , Az = ip[2], Bz = target[2]
-      , scale
-    if(Az === 0) Az = 0.00001
-    scale = Bz / Az
-    if(scale < 0) scale = - scale
-    if(scale === Infinity || scale < 0) scale = 0
-    return scale
-  }
+  // how far the point is from the camera
+  perspective.depth = function(p){ return i.multiVector(p)[2] /*copy `p`*/ }
+  perspective.scale = function(p){ return project(p)[3] }
 
   // does the camera transform matrix need to be recomputed?
   var dirty = true
