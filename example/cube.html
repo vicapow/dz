@@ -5,10 +5,10 @@
   </style>
   <body>
   <script src="d3.js"></script>
-  <script src="../ind33d.js"></script>
+  <script src="../dz.js"></script>
   <script>
 
-var p = ind33d.projection.perspective()
+var p = dz.projection.perspective()
   , w = window.innerWidth
   , h = window.innerHeight
   , svg = d3.select('body').append('svg')
@@ -39,7 +39,7 @@ var p = ind33d.projection.perspective()
 
 function project(box, t){
   return box.map(function(p){ return p.slice(0)}) // deep copy
-    .map(ind33d.matrix().rotateX(t).rotateZ(t).translate([0, 0, -10])
+    .map(dz.matrix().rotateX(t).rotateZ(t).translate([0, 0, -10])
     .multiVector).map(p.project)
 }
 

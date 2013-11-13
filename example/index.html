@@ -5,10 +5,10 @@
   </style>
   <body>
   <script src="d3.js"></script>
-  <script src="../ind33d.js"></script>
+  <script src="../dz.js"></script>
   <script>
 
-var p = ind33d.projection.perspective() //.x(x).y(y)
+var p = dz.projection.perspective() //.x(x).y(y)
   , w = window.innerWidth
   , h = window.innerHeight
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
@@ -39,10 +39,10 @@ function generateBox(n, width){
 
 var svg = d3.select('body').append('svg')
   , theta = 0
-  , rotate = ind33d.rotate
-  , translate = ind33d.translate
-  , matrix = ind33d.matrix
-  , scale = ind33d.scale
+  , rotate = dz.rotate
+  , translate = dz.translate
+  , matrix = dz.matrix
+  , scale = dz.scale
   , t = 100
   , x = 0
   , y = 0

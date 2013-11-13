@@ -5,10 +5,10 @@
   </style>
   <body>
   <script src="d3.js"></script>
-  <script src="../ind33d.js"></script>
+  <script src="../dz.js"></script>
   <script>
 
-var p = ind33d.projection.perspective()
+var p = dz.projection.perspective()
   , w = window.innerWidth
   , h = window.innerHeight
   , svg = d3.select('body').append('svg')
@@ -35,9 +35,9 @@ function generateBox(n, width){
 
 function transform(box, t){
   data = box.map(function(p){ return p.slice(0) }) // copy points
-  data = data.map(ind33d.matrix().rotateX(t).multiVector)
-  data = data.map(ind33d.matrix().rotateY(t).multiVector)
-  data = data.map(ind33d.matrix().rotateZ(t).multiVector)
+  data = data.map(dz.matrix().rotateX(t).multiVector)
+  data = data.map(dz.matrix().rotateY(t).multiVector)
+  data = data.map(dz.matrix().rotateZ(t).multiVector)
   return data
 }
 

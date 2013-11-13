@@ -1,16 +1,16 @@
-var ind33d = { projection: {} }
+var dz = { projection: {} }
 
-ind33d.matrix = require('./matrix')
-ind33d.vector = require('./vector')
-ind33d.projection = require('./projection')
+dz.matrix = require('./matrix')
+dz.vector = require('./vector')
+dz.projection = require('./projection')
 
-ind33d.translate = function(points, delta){
+dz.translate = function(points, delta){
   return points.map(function(p){
     return [p[0] + delta[0], p[1] + delta[1], p[2] + delta[2]]
   })
 }
 
-ind33d.rotate = function(points, theta){
+dz.rotate = function(points, theta){
   return points.map(function(p){
     return [ 
       p[0] * Math.cos(theta) - p[2] * Math.sin(theta) 
@@ -20,10 +20,10 @@ ind33d.rotate = function(points, theta){
   })
 }
 
-ind33d.scale = function(points, scale){
+dz.scale = function(points, scale){
   return points.map(function(p){
     return [ p[0] * scale[0], p[1] * scale[1], p[2] * scale[2] ]
   })
 }
 
-module.exports = ind33d
+module.exports = dz
