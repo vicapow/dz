@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <style>
+    body, html{ margin: 0;}
+    path{ fill: none; stroke: black; stroke-width: 1; }
+    .left-chain circle { fill: red; }
+    .right-chain circle { fill: blue; }
+  </style>
+  <body>
+  <script src="d3.js"></script>
+  <script src="../dz.js"></script>
+  <script>
+
+var perspective = dz.projection.perspective()
+  , cameraPos = [0, 0, 100000]
+  , camera = perspective.camera().position(cameraPos).focalLength(10000)
+  , w = window.innerWidth, h = window.innerHeight
+  , sin = Math.sin, cos = Math.cos, π = Math.PI, τ = π * 2
+  , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
+  , copy = function(data){ return data.slice(0) }
+  // screen scaling
+  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
+  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
+  , svg = d3.select('body').append('svg')
+  , leftHelix = helix(30).map(dz.matrix().translate([0, -π, 0]).multiVector)
+  , rightHelix = leftHelix.map(copy).map(dz.matrix().rotateY(π).multiVector)
+  , line = d3.svg.line()
+      .x(function(d){ return screenX(perspective.x(d)) })
+      .y(function(d){ return screenY(perspective.y(d)) })
+
+
+
+function helix(n){
+  return d3.range(n).map(function(i){
+    return [sin(i / n * τ), i / n * τ, cos(i / n * τ)]
+  })
+}
+
+function updateNode(){
+  this.attr('cx', function(d){ return screenX(perspective.x(d)) })
+    .attr('cy', function(d){ return screenY(perspective.y(d)) })
+    .attr('r', function(d){ return perspective.scale(d) * 20 })
+}
+
+var leftChain = svg.append('g').attr('class', 'left-chain')
+  .selectAll('circle').data(leftHelix)
+  .enter().append('circle').call(updateNode)
+
+var rightChain = svg.append('g').attr('class', 'right-chain')
+  .selectAll('circle').data(rightHelix)
+  .enter().append('circle').call(updateNode)
+
+var rows = svg.append('g').attr('class', 'rows').selectAll('path')
+  .data(d3.zip(leftHelix, rightHelix)).enter().append('path')
+  .attr('d', line)
+
+d3.timer(function(t){
+  camera.lookAt([0, 0, t / 10000])
+  leftChain.call(updateNode)
+  rightChain.call(updateNode)
+  rows.attr('d', line)
+})
+
+  </script>
+  </body>
+</html>

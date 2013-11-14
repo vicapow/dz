@@ -34,16 +34,13 @@ function generateBox(n, width){
 }
 
 function transform(box, t){
-  data = box.map(function(p){ return p.slice(0) }) // copy points
-  data = data.map(dz.matrix().rotateX(t).multiVector)
-  data = data.map(dz.matrix().rotateY(t).multiVector)
-  data = data.map(dz.matrix().rotateZ(t).multiVector)
-  return data
+  return box.map(function(p){ return p.slice(0) }) // copy points
+    .map(dz.matrix().rotateX(t).rotateY(t).rotateZ(t).multiVector)
 }
 
+// color the circles
 svg.selectAll('circle').data(transform(box, 0))
   .enter().append('circle')
-  // color the circles according to their axis
   .attr('fill', function(d, i){
     d = box[i] // get original coordinates
     // origin
@@ -62,10 +59,12 @@ d3.timer(function(t){
   var t = t / 1000, f = 1 / t
   if(f < 0.5) f = 0.5
   p.camera().focalLength(f).position([0, 0, f / 1])
-  circles.data(transform(box, t)).sort(function(a, b){ return p.depth(a) - p.depth(b) })
-    .attr('cx', function(d){ return screenX(p.x(d)) })
-    .attr('cy', function(d){ return screenY(p.y(d)) })
-    .attr('r', function(d){ return p.scale(d) * 20 })
+  circles.data(transform(box, t)).sort(function(a, b){ 
+    return p.depth(a) - p.depth(b) 
+  })
+  .attr('cx', function(d){ return screenX(p.x(d)) })
+  .attr('cy', function(d){ return screenY(p.y(d)) })
+  .attr('r', function(d){ return p.scale(d) * 20 })
 })
 
   </script>

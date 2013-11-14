@@ -7,9 +7,7 @@ var vector = require('./vector')
 projection.perspective = function(){
 
   // the perspective object
-  var perspective = {}
-
-  var project = perspective.project = function(p){
+  var perspective = function(p){
     camera.transform() // recalculate the transform
     // `ip` is the vector of the poin in "camera space" aka, as if the camera
     // was at (0, 0, 0)
@@ -21,11 +19,11 @@ projection.perspective = function(){
     return [p[0] * scale, p[1] * scale, p[2] * scale, scale]
   }
 
-  perspective.x = function(p){ return project(p)[0] }
-  perspective.y = function(p){ return project(p)[1] }
+  perspective.x = function(p){ return perspective(p)[0] }
+  perspective.y = function(p){ return perspective(p)[1] }
   // how far the point is from the camera
   perspective.depth = function(p){ return i.multiVector(p)[2] /*copy `p`*/ }
-  perspective.scale = function(p){ return project(p)[3] }
+  perspective.scale = function(p){ return perspective(p)[3] }
 
   // does the camera transform matrix need to be recomputed?
   var dirty = true

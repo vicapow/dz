@@ -5,31 +5,10 @@ var dz = { projection: {} }
 dz.matrix = require('./matrix')
 dz.vector = require('./vector')
 dz.projection = require('./projection')
-
-dz.translate = function(points, delta){
-  return points.map(function(p){
-    return [p[0] + delta[0], p[1] + delta[1], p[2] + delta[2]]
-  })
-}
-
-dz.rotate = function(points, theta){
-  return points.map(function(p){
-    return [ 
-      p[0] * Math.cos(theta) - p[2] * Math.sin(theta) 
-      , p[1]
-      , p[0] * Math.sin(theta) + p[2] * Math.cos(theta) 
-    ]
-  })
-}
-
-dz.scale = function(points, scale){
-  return points.map(function(p){
-    return [ p[0] * scale[0], p[1] * scale[1], p[2] * scale[2] ]
-  })
-}
+dz.shapes = require('./shapes')
 
 module.exports = dz
-},{"./matrix":2,"./projection":3,"./vector":4}],2:[function(require,module,exports){
+},{"./matrix":2,"./projection":3,"./shapes":4,"./vector":5}],2:[function(require,module,exports){
 var vector = require('./vector')
 
 /** 
@@ -252,7 +231,7 @@ var matrix = module.exports = function(m){
 
   return self
 }
-},{"./vector":4}],3:[function(require,module,exports){
+},{"./vector":5}],3:[function(require,module,exports){
 var projection = module.exports = {}
 
 var matrix = require('./matrix')
@@ -262,9 +241,7 @@ var vector = require('./vector')
 projection.perspective = function(){
 
   // the perspective object
-  var perspective = {}
-
-  var project = perspective.project = function(p){
+  var perspective = function(p){
     camera.transform() // recalculate the transform
     // `ip` is the vector of the poin in "camera space" aka, as if the camera
     // was at (0, 0, 0)
@@ -276,11 +253,11 @@ projection.perspective = function(){
     return [p[0] * scale, p[1] * scale, p[2] * scale, scale]
   }
 
-  perspective.x = function(p){ return project(p)[0] }
-  perspective.y = function(p){ return project(p)[1] }
+  perspective.x = function(p){ return perspective(p)[0] }
+  perspective.y = function(p){ return perspective(p)[1] }
   // how far the point is from the camera
   perspective.depth = function(p){ return i.multiVector(p)[2] /*copy `p`*/ }
-  perspective.scale = function(p){ return project(p)[3] }
+  perspective.scale = function(p){ return perspective(p)[3] }
 
   // does the camera transform matrix need to be recomputed?
   var dirty = true
@@ -336,7 +313,17 @@ projection.perspective = function(){
   // create a new perspective
   return perspective
 }
-},{"./matrix":2,"./vector":4}],4:[function(require,module,exports){
+},{"./matrix":2,"./vector":5}],4:[function(require,module,exports){
+var shapes = module.exports = {}
+
+// unit circle flat against the YZ plane
+shapes.circle = function(n){
+  var t = Math.PI * 2 // tau
+  return d3.range(n + 1).map(function(i){
+    return [sin(i / n * t), cos(i / n * t), 0]
+  })
+}
+},{}],5:[function(require,module,exports){
 
 var vector = module.exports = function(array3){
   // vector argument

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <style>
+    body, html{ margin: 0;}
+    path{ fill: none; stroke: black; stroke-width: 1; }
+    circle.dot { fill: red; }
+  </style>
+  <body>
+  <script src="d3.js"></script>
+  <script src="../dz.js"></script>
+  <script>
+
+var perspective = dz.projection.perspective()
+  , w = window.innerWidth, h = window.innerHeight
+  , sin = Math.sin, cos = Math.cos, π = Math.PI, τ = π * 2
+  , svg = d3.select('body').append('svg')
+  , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
+  // screen scaling
+  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
+  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
+  // d3 line generator
+  , line = d3.svg.line()
+      .x(function(p){ return screenX(p[0])})
+      .y(function(p){ return screenY(p[1])})
+  , screwPoints = corkScrew(50)
+  , circlePoints = dz.shapes.circle(50)
+  , rotY = -π/2
+
+// generate a corkscrew along the z axis
+function corkScrew(n){
+  return d3.range(n).map(function(i){
+    return [sin(i / n * τ), cos(i / n * τ), i / n * τ]
+  })
+}
+
+
+function flatten(points, t){
+  return points.map(function(p){ return p.slice(0)}) // deep copy
+    .map(dz.matrix()
+      .rotateZ(t / 1000 * τ * 0.25)
+      .rotateY(rotY)
+      .translate([0, 0, 0])
+      .multiVector).map(perspective)
+}
+
+var screw = svg.append('path')
+  , circle = svg.append('path')
+  , dot = svg.append('circle').attr('class', 'dot')
+  , maxf = 2000, minf = 0.75, f = maxf
+  , ease = d3.ease('cubic-out')
+
+d3.timer(function(t){
+  perspective.camera().focalLength(f).position([0, 0, f * 10])
+  circle.datum(flatten(circlePoints, t)).attr('d', line)
+  var flatScrew = flatten(screwPoints, t)
+  screw.datum(flatScrew).attr('d', line)
+  var last = flatScrew[flatScrew.length -1]
+  dot.attr({cx: screenX(last[0]), cy: screenY(last[1]), r: 40 * last[3] })
+})
+
+d3.transition().delay(1000)
+  .duration(2000).ease('cubic-out').tween('rotX', function(t){
+    return function(t){ 
+      rotY = -π/2 + π / 2 * t
+      f = (1 - t) * maxf + minf
+    }
+  })
+
+  </script>
+  </body>
+</html>

@@ -71,7 +71,7 @@ d3.timer(function(t){
   var t = t / 1000, f = 5 / t, data
   if(f < 0.5) f = 0.5
   p.camera().focalLength(0.3).position([0, 0, 4])
-  flatBox = project(box, t)
+  var flatBox = project(box, t)
   // connect the dots!
   path.data(lines.map(function(segment){
     return [flatBox[segment[0]], flatBox[segment[1]]]
