@@ -25,6 +25,7 @@ var p = dz.projection.perspective()
 
 d3.timer(function(t){
   t = t / 1000
+  // it's all a lie! the camera is really the thing moving
   p.camera().position(dz.matrix().rotateY(t).multiVector([0, 0, 2]))
   circle.attr('cx', function(d){ return screenX(p.x(d)) })
   .attr('cy', function(d){ return screenY(p.y(d)) })

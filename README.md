@@ -8,6 +8,7 @@ DZ(3d) -> 2d
 And doesn't try to do anything more than that!
 
 checkout these demos
+  + [dna](http://vicapow.github.io/dz/example/dna.html)
   + [crazy cube](http://vicapow.github.io/dz/example/dot-matrix.html)
   + [simple cube](http://vicapow.github.io/dz/example/cube.html)
   + [euler formula](http://vicapow.github.io/dz/example/dot-matrix.html)
