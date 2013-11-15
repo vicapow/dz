@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    body, html{ margin: 0;}
+  </style>
+  <body>
+  <script src="d3.js"></script>
+  <script src="../dz.js"></script>
+  <script>
+
+var p = dz.projection.perspective()
+  , w = window.innerWidth
+  , h = window.innerHeight
+  , svg = d3.select('body').append('svg')
+  , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
+  // screen scaling
+  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
+  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
+  , dot = [1, 0, 0]
+  , t = 0
+  , circle = svg.append('circle').datum(dot)
+
+// update the transform on the circle
+
+
+d3.timer(function(t){
+  t = t / 1000
+  p.camera().position(dz.matrix().rotateY(t).multiVector([0, 0, 2]))
+  circle.attr('cx', function(d){ return screenX(p.x(d)) })
+  .attr('cy', function(d){ return screenY(p.y(d)) })
+  .attr('r', function(d){ return p.scale(d) * 20 })
+})
+
+  </script>
+  </body>
+</html>
