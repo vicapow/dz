@@ -54,7 +54,7 @@ var p = dz.projection.perspective()
 function project(box, t){
   return box.map(function(p){ return p.slice(0)}) // deep copy
     .map(dz.matrix().rotateX(t).rotateZ(t).translate([0, 0, 0])
-    .multiVector).map(p.project)
+    .multiVector).map(p)
 }
 
 

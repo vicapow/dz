@@ -28,7 +28,7 @@ or, install via npm
 
 ## Example
 
-Here's a quick sample. Checkout [example/dot-matrix.html](http://vicapow.github.io/dz/example/dot-matrix.html) for a working demo.
+Here's a quick sample. Checkout [example/orbit.html](http://vicapow.github.io/dz/example/orbit.html) for a simple fully working demo.
 
 ````js
 // create a new projection
