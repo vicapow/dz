@@ -16,9 +16,9 @@ var vector = module.exports = function(array3){
   // subtract vectors
   v.minus = function(v){
     v = array(v)
-    x -= v[0]
-    y -= v[1]
-    z -= v[2]
+    x = x - v[0]
+    y = y - v[1]
+    z = z - v[2]
     return this
   }
 
@@ -26,7 +26,7 @@ var vector = module.exports = function(array3){
     // allow single argument form
     if(arguments.length === 1){ v2 = v1; v1 = v }
     v1 = array(v1); v2 = array(v2)
-    var tx, ty, tz
+    var tx, ty, tz // temp
     tx = v1[1] * v2[2] - v1[2] * v2[1]
     ty = v1[2] * v2[0] - v1[0] * v2[2]
     tz = v1[0] * v2[1] - v1[1] * v2[0]
@@ -44,15 +44,15 @@ var vector = module.exports = function(array3){
     return this
   }
 
-  v.x = function(s){ 
-    if(!arguments.length) return x;
+  v.x = function(s){
+    if(!arguments.length) return x
     x = s; return this
   }
-  v.y = function(s){ 
+  v.y = function(s){
     if(!arguments.length) return y
     y = s; return this
   }
-  v.z = function(s){ 
+  v.z = function(s){
     if(!arguments.length) return z
     z =s ; return this
   }
@@ -65,7 +65,7 @@ var vector = module.exports = function(array3){
   v.length = function(){ return Math.sqrt( x * x + y * y + z * z) }
 
   v.array = function(vec){
-    if(!arguments.length) return [x, y, z] 
+    if(!arguments.length) return [x, y, z]
     x = vec[0]; y = vec[1]; z = vec[2]
     return this
   }

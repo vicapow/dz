@@ -17,6 +17,20 @@ describe('projection.perspective', function(){
       camera.position([16, 25, 82]).should.be.equal(camera, 'should return a '
         + 'reference to the original camera object')
       camera.position().should.be.eql([16, 25, 82])
+      camera.position([0, 0, 1])
+      var p = [1, 0, 0], pi = perspective(p)
+      ;[ pi[0], pi[1], pi[2] ].should.be.eql(p) // comma
+
+      camera.position([1, 0, 0]) // camera looking down the x axis
+      p = [1, 0, 0]; pi = perspective(p) // point on the x axis
+      // should see the point in the center of the screen
+      ;[ pi[0], pi[1], pi[2] ].should.be.eql([0, 0, 0])
+
+      p = [Math.cos(Math.PI / 4), 0, Math.sin(Math.PI / 4)]
+      camera.position(p)
+      pi = perspective(p)
+      ;[ pi[0], pi[1], pi[2] ].should.be.eql([0, 0, 0])
+
     })
     describe('#lookAt', function(){
       camera.lookAt([53, 91, 3]).should.be.equal(camera, 'should return a '

@@ -37,6 +37,49 @@ function matrix_multiply(ae, be, res){
   res[3][3] = a41 * b14 + a42 * b24 + a43 * b34 + a44 * b44
 }
 
+// based on 
+// https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
+function matrix_inverse(t){
+  // copy
+  var n11 = t[0][0], n12 = t[0][1], n13 = t[0][2], n14 = t[0][3]
+    , n21 = t[1][0], n22 = t[1][1], n23 = t[1][2], n24 = t[1][3]
+    , n31 = t[2][0], n32 = t[2][1], n33 = t[2][2], n34 = t[2][3]
+    , n41 = t[3][0], n42 = t[3][1], n43 = t[3][2], n44 = t[3][3]
+
+  t[0][0] = n23*n34*n42 - n24*n33*n42 + n24*n32*n43 - n22*n34*n43 - n23*n32*n44 + n22*n33*n44
+  t[0][1] = n14*n33*n42 - n13*n34*n42 - n14*n32*n43 + n12*n34*n43 + n13*n32*n44 - n12*n33*n44
+  t[0][2] = n13*n24*n42 - n14*n23*n42 + n14*n22*n43 - n12*n24*n43 - n13*n22*n44 + n12*n23*n44
+  t[0][3] = n14*n23*n32 - n13*n24*n32 - n14*n22*n33 + n12*n24*n33 + n13*n22*n34 - n12*n23*n34
+  t[1][0] = n24*n33*n41 - n23*n34*n41 - n24*n31*n43 + n21*n34*n43 + n23*n31*n44 - n21*n33*n44
+  t[1][1] = n13*n34*n41 - n14*n33*n41 + n14*n31*n43 - n11*n34*n43 - n13*n31*n44 + n11*n33*n44
+  t[1][2] = n14*n23*n41 - n13*n24*n41 - n14*n21*n43 + n11*n24*n43 + n13*n21*n44 - n11*n23*n44
+  t[1][3] = n13*n24*n31 - n14*n23*n31 + n14*n21*n33 - n11*n24*n33 - n13*n21*n34 + n11*n23*n34
+  t[2][0] = n22*n34*n41 - n24*n32*n41 + n24*n31*n42 - n21*n34*n42 - n22*n31*n44 + n21*n32*n44
+  t[2][1] = n14*n32*n41 - n12*n34*n41 - n14*n31*n42 + n11*n34*n42 + n12*n31*n44 - n11*n32*n44
+  t[2][2] = n12*n24*n41 - n14*n22*n41 + n14*n21*n42 - n11*n24*n42 - n12*n21*n44 + n11*n22*n44
+  t[2][3] = n14*n22*n31 - n12*n24*n31 - n14*n21*n32 + n11*n24*n32 + n12*n21*n34 - n11*n22*n34
+  t[3][0] = n23*n32*n41 - n22*n33*n41 - n23*n31*n42 + n21*n33*n42 + n22*n31*n43 - n21*n32*n43
+  t[3][1] = n12*n33*n41 - n13*n32*n41 + n13*n31*n42 - n11*n33*n42 - n12*n31*n43 + n11*n32*n43
+  t[3][2] = n13*n22*n41 - n12*n23*n41 - n13*n21*n42 + n11*n23*n42 + n12*n21*n43 - n11*n22*n43
+  t[3][3] = n12*n23*n31 - n13*n22*n31 + n13*n21*n32 - n11*n23*n32 - n12*n21*n33 + n11*n22*n33
+
+  var det = n11 * t[0][0] + n21 * t[0][1] + n31 * t[0][2] + n41 * t[0][3]
+  if(det === 0) throw new Error('det=0 for matrix.inverse()')
+  matrix_multi_scalar(t, 1 / det)
+}
+
+matrix_multi_scalar = function(m, s){
+  m[0][0] *= s; m[0][1] *= s; m[0][2] *= s; m[0][3] *= s
+  m[1][0] *= s; m[1][1] *= s; m[1][2] *= s; m[1][3] *= s
+  m[2][0] *= s; m[2][1] *= s; m[2][2] *= s; m[2][3] *= s
+  m[3][0] *= s; m[3][1] *= s; m[3][2] *= s; m[3][3] *= s
+}
+
+function matrix_copy(m){
+  // TODO: optimize
+  return m.map(function(row){ return row.slice(0) })
+}
+
 var matrix = module.exports = function(m){
 
   /** of the form:
@@ -121,28 +164,43 @@ var matrix = module.exports = function(m){
     return self // make chain-able
   }
 
-  // unlike three.js, our `lookAt` also sets the position to be `eye`
+  self.scale = function(s){
+    if(typeof s === 'number') s = [s, s, s]
+    else if(!(s instanceof Array)) s = s.array()
+    var t = [
+        [ s[0],    0,    0, 0 ]
+      , [    0, s[1],    0, 0 ]
+      , [    0,    0, s[2], 0 ]
+      , [    0,    0,    0, 1 ]
+    ]
+    matrix_multiply(t, m, m)
+    return self // make chain-able
+  }
+
   // creates a transform that would take a unit camera at (0,0,0) looking
   // down the -z axis and up along the y axis to the coordinates described
   // by `eye`, `target` and `up`
   self.lookAt = function(eye, target, up){
     var x = vector()
       , y = vector()
-      , z = vector(eye).minus(target).normalize()
+      , z = vector(eye)
 
+    // normal vector from eye to target. eye looking down the -z
+    z.minus(target).normalize()
     if(z.length() === 0) z.z(1)
+    
     x.cross(up, z).normalize()
-
     if(x.length() === 0){
       z.x(z.x() + 0.0001)
       x.cross(up, z).normalize()
     }
     y.cross(z, x)
-    x = x.array(), y = y.array(), z = z.array()
-    m[0][0] = x[0];   m[1][0] =   x[1]; m[2][0] =   x[2]
-    m[0][1] = y[0];   m[1][1] =   y[1]; m[2][1] =   y[2]
-    m[0][2] = z[0];   m[1][2] =   z[1]; m[2][2] =   z[2]
-    m[0][3] = eye[0]; m[1][3] = eye[1]; m[2][3] = eye[2]
+
+    x = x.array(); y = y.array(); z = z.array()
+    m[0][0] =   x[0]; m[0][1] = y[0];  m[0][2] = z[0];  m[0][3] = eye[0];
+    m[1][0] =   x[1]; m[1][1] = y[1];  m[1][2] = z[1];  m[1][3] = eye[1];
+    m[2][0] =   x[2]; m[2][1] = y[2];  m[2][2] = z[2];  m[2][3] = eye[2];
+    m[3][0] =      0; m[3][1] =    0;  m[3][2] =    0;  m[3][3] =      1;
 
     return self // make chain-able
   }
@@ -156,10 +214,7 @@ var matrix = module.exports = function(m){
     return vec.slice(0) // copy
   }
   self.multiScalar = function(s){
-    m[0][0] *= s; m[0][1] *= s; m[0][2] *= s; m[0][3] *= s
-    m[1][0] *= s; m[1][1] *= s; m[1][2] *= s; m[1][3] *= s
-    m[2][0] *= s; m[2][1] *= s; m[2][2] *= s; m[2][3] *= s
-    m[3][0] *= s; m[3][1] *= s; m[3][2] *= s; m[3][3] *= s
+    matrix_multi_scalar(m, s)
     return self
   }
 
@@ -182,41 +237,12 @@ var matrix = module.exports = function(m){
   }
 
   self.inverse = function(){
-    // based on 
-    // https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
-    var t = m
-      , n11 = t[0][0], n12 = t[0][1], n13 = t[0][2], n14 = t[0][3]
-      , n21 = t[1][0], n22 = t[1][1], n23 = t[1][2], n24 = t[1][3]
-      , n31 = t[2][0], n32 = t[2][1], n33 = t[2][2], n34 = t[2][3]
-      , n41 = t[3][0], n42 = t[3][1], n43 = t[3][2], n44 = t[3][3]
-
-    t[0][0] = n23*n34*n42 - n24*n33*n42 + n24*n32*n43 - n22*n34*n43 - n23*n32*n44 + n22*n33*n44
-    t[0][1] = n14*n33*n42 - n13*n34*n42 - n14*n32*n43 + n12*n34*n43 + n13*n32*n44 - n12*n33*n44
-    t[0][2] = n13*n24*n42 - n14*n23*n42 + n14*n22*n43 - n12*n24*n43 - n13*n22*n44 + n12*n23*n44
-    t[0][3] = n14*n23*n32 - n13*n24*n32 - n14*n22*n33 + n12*n24*n33 + n13*n22*n34 - n12*n23*n34
-    t[1][0] = n24*n33*n41 - n23*n34*n41 - n24*n31*n43 + n21*n34*n43 + n23*n31*n44 - n21*n33*n44
-    t[1][1] = n13*n34*n41 - n14*n33*n41 + n14*n31*n43 - n11*n34*n43 - n13*n31*n44 + n11*n33*n44
-    t[1][2] = n14*n23*n41 - n13*n24*n41 - n14*n21*n43 + n11*n24*n43 + n13*n21*n44 - n11*n23*n44
-    t[1][3] = n13*n24*n31 - n14*n23*n31 + n14*n21*n33 - n11*n24*n33 - n13*n21*n34 + n11*n23*n34
-    t[2][0] = n22*n34*n41 - n24*n32*n41 + n24*n31*n42 - n21*n34*n42 - n22*n31*n44 + n21*n32*n44
-    t[2][1] = n14*n32*n41 - n12*n34*n41 - n14*n31*n42 + n11*n34*n42 + n12*n31*n44 - n11*n32*n44
-    t[2][2] = n12*n24*n41 - n14*n22*n41 + n14*n21*n42 - n11*n24*n42 - n12*n21*n44 + n11*n22*n44
-    t[2][3] = n14*n22*n31 - n12*n24*n31 - n14*n21*n32 + n11*n24*n32 + n12*n21*n34 - n11*n22*n34
-    t[3][0] = n23*n32*n41 - n22*n33*n41 - n23*n31*n42 + n21*n33*n42 + n22*n31*n43 - n21*n32*n43
-    t[3][1] = n12*n33*n41 - n13*n32*n41 + n13*n31*n42 - n11*n33*n42 - n12*n31*n43 + n11*n32*n43
-    t[3][2] = n13*n22*n41 - n12*n23*n41 - n13*n21*n42 + n11*n23*n42 + n12*n21*n43 - n11*n22*n43
-    t[3][3] = n12*n23*n31 - n13*n22*n31 + n13*n21*n32 - n11*n23*n32 - n12*n21*n33 + n11*n22*n33
-
-    var det = n11 * t[0][0] + n21 * t[0][1] + n31 * t[0][2] + n41 * t[0][3]
-
-    if(det === 0) throw new Error('det=0 for matrix.inverse()')
-
-    return self.multiScalar(1 / det) // return chain-able ref to `m`
+    matrix_inverse(m)
+    return self
   }
   
   if(!m) self.identity()
   else if(!(m instanceof Array)) m = m.array() // convert self to array
-  m = m.slice(0) // copy
-
+  m = matrix_copy(m)
   return self
 }

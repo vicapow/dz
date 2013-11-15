@@ -10,5 +10,5 @@ browserify-watch:
 test:
 	$(MOCHA) $(MOCHA_OPTS) tests/
 
-test-w:
+test-watch:
 	$(MOCHA) $(MOCHA_OPTS) --watch tests/

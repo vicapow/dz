@@ -16,7 +16,7 @@ projection.perspective = function(){
     if(Az === 0) Az = 0.00001
     scale = Bz / Az
     if(scale < 0) scale = 0
-    return [p[0] * scale, p[1] * scale, p[2] * scale, scale]
+    return [ip[0] * scale, ip[1] * scale, ip[2] * scale, scale]
   }
 
   perspective.x = function(p){ return perspective(p)[0] }
@@ -38,12 +38,14 @@ projection.perspective = function(){
     camera.position = function(array3){
       if(!array3) return position.slice(0) // copy
       dirty = true
-      position = array3.slice(0); return camera
+      position = array3.slice(0) /*copy*/
+      return camera
     }
     camera.lookAt = function(array3){
       if(!array3) return lookAt.slice(0) // copy
       dirty = true
-      lookAt = vector(array3).normalize().array(); return camera
+      lookAt = array3
+      return camera
     }
     camera.up = function(array3){
       if(!array3) return up.slice(0) // copy

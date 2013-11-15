@@ -14,24 +14,10 @@ var p = dz.projection.perspective()
   , svg = d3.select('body').append('svg')
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
   // screen scaling
-  , screenX = d3.scale.linear().domain([1, -1]).range([0, max])
-  , screenY = d3.scale.linear().domain([-1, 1]).range([-diff/2, max + -diff/2])
+  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
+  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
 
-var box = generateBox(5, 0.5)
-
-// generate a bunch of points in a cube shape
-function generateBox(n, width){
-  var s = width / (n - 1), t = width / 2
-  var points = []
-  for(var x = 0; x < n; x++){
-    for(var y = 0; y < n; y++){
-      for(var z = 0; z < n; z++){
-        points.push([x * s - t, y * s - t, z * s - t])
-      }
-    }
-  }
-  return points
-}
+var box = dz.shapes.box(5).map(dz.matrix().scale(0.5).multiVector)
 
 function transform(box, t){
   return box.map(function(p){ return p.slice(0) }) // copy points

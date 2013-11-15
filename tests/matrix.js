@@ -71,6 +71,16 @@ describe('matrix', function(){
         .should.eql(array4x4Random)
     }).should.throw() // because of det=0
 
+    var p = [ 0, 0, 1]
+    var m = matrix().rotateY(Math.PI / 4) // 45 degree rotation about Y (clockwise)
+    var pi = m.multiVector(p)
+    var i = matrix(m).inverse()
+    var pii = i.multiVector(pi)
+    p.should.eql(pii)
+    m.multiVector(p).should.eql(pi)
+    m.rotateY(- Math.PI / 4)
+    m.multiVector(p).should.eql(p)
+    i.multiVector(pi).should.eql(pii)
   })
   describe('#multiVector', function(){
     it('should produce the product of multiplying the matrix with a vector'
