@@ -35,15 +35,21 @@ Here's a quick sample. Checkout [example/orbit.html](http://vicapow.github.io/dz
 ````js
 // create a new projection
 var perspective = dz.projection.perspective()
-  // and configure the camera (aka, the "eyeball")
-  .camera().position([0, 0, 1]).lookAt([0, 0, 0])
+
+// and configure the camera (aka, the "eyeball")
+perspective.camera().position([0, 0, 1]).lookAt([0, 0, 0])
+
 // create some 3d data
-var data = [0, -1, 0.5] // a point at (0, -1, 0.5)
+var data = [0, -1, -0.5] // a point at (0, -1, -0.5)
 
-p.project(data) // -> [x, y] projection of your data point
+// projection of your data point onto the camera "film"
+perspective(data) // -> [x, y]
 
-p.x(data) // provides the x coordinate of the 3D -> 2D projection
-p.y(data) // provides the y coordinate of the 3D -> 2D projection
+// or also
+
+perspective.x(data) // x coordinate of the 3D -> 2D projection
+perspective.y(data) // y coordinate of the 3D -> 2D projection
+
 ````
 
 No documentation yet so for now have a look at the source code
