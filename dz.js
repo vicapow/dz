@@ -5,10 +5,10 @@ var dz = { projection: {} }
 dz.matrix = require('./matrix')
 dz.vector = require('./vector')
 dz.projection = require('./projection')
-dz.shapes = require('./shapes')
+dz.shape = require('./shape')
 
 module.exports = dz
-},{"./matrix":2,"./projection":3,"./shapes":4,"./vector":5}],2:[function(require,module,exports){
+},{"./matrix":2,"./projection":3,"./shape":4,"./vector":5}],2:[function(require,module,exports){
 var vector = require('./vector')
 
 /** 
@@ -342,13 +342,13 @@ projection.perspective = function(){
   return perspective
 }
 },{"./matrix":2,"./vector":5}],4:[function(require,module,exports){
-var shapes = module.exports = {}
+var shape = module.exports = {}
 
 // unit circle flat against the YZ plane where `n` is the "resolution"
 // n = 1 -> a line
 // n = 2 -. a triangle
 // etc...
-shapes.circle = function(n){
+shape.circle = function(n){
   var t = Math.PI * 2 // tau
   return d3.range(n + 1).map(function(i){
     return [sin(i / n * t), cos(i / n * t), 0]
@@ -358,19 +358,32 @@ shapes.circle = function(n){
 // construct a grid or matrix box of points where `n` is the "resolution", ie., 
 // the number of inner points
 // n = 2 -> a simple 8 point cube
-shapes.box = function(n){
-  if(!n) n = 2
-  var s = 1 / (n - 1), t = 1 / 2
+shape.box = function(nx, ny, nz){
+  // optional arguments
+  if(!nx) nx = 2
+  if(!ny) ny = nx
+  if(!nz) nz = ny
+
   var points = []
-  for(var x = 0; x < n; x++){
-    for(var y = 0; y < n; y++){
-      for(var z = 0; z < n; z++){
-        points.push([x * s - t, y * s - t, z * s - t])
+    , sx, tx = 0.5
+    , sy, ty = 0.5
+    , sz, tz = 0.5
+  
+  if(nx < 2){ sx = 1; tx = 0 } else sx = 1 / (nx - 1)
+  if(ny < 2){ sy = 1; ty = 0 } else sy = 1 / (ny - 1)
+  if(nz < 2){ sz = 1; tz = 0 } else sz = 1 / (nz - 1)
+
+  for(var x = 0; x < nx; x++){
+    for(var y = 0; y < ny; y++){
+      for(var z = 0; z < nz; z++){
+        points.push([x * sx - tx, y * sy - ty, z * sz - tz])
       }
     }
   }
   return points
 }
+
+shape.plane = function(n){ return shape.box(1, n, n) }
 },{}],5:[function(require,module,exports){
 
 var vector = module.exports = function(array3){

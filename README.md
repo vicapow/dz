@@ -10,8 +10,10 @@ And doesn't try to do anything more than that!
 checkout these demos
   + [dna](http://vicapow.github.io/dz/example/dna.html)
   + [crazy cube](http://vicapow.github.io/dz/example/dot-matrix.html)
+  + [plot](http://vicapow.github.io/dz/example/plot.html)
   + [simple cube](http://vicapow.github.io/dz/example/cube.html)
-  + [euler formula](http://vicapow.github.io/dz/example/dot-matrix.html)
+  + [euler formula](http://vicapow.github.io/dz/example/euler.html)
+  + [plane](http://vicapow.github.io/dz/example/plane.html)
   + [orbit](http://vicapow.github.io/dz/example/orbit.html)
 
 ## Installation

@@ -24,7 +24,7 @@ var perspective = dz.projection.perspective()
       .x(function(p){ return screenX(p[0])})
       .y(function(p){ return screenY(p[1])})
   , screwPoints = corkScrew(50)
-  , circlePoints = dz.shapes.circle(50)
+  , circlePoints = dz.shape.circle(50)
   , rotY = -π/2
 
 // generate a corkscrew along the z axis

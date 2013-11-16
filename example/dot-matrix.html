@@ -17,7 +17,7 @@ var p = dz.projection.perspective()
   , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
   , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
 
-var box = dz.shapes.box(5).map(dz.matrix().scale(0.5).multiVector)
+var box = dz.shape.box(5).map(dz.matrix().scale(0.5).multiVector)
 
 function transform(box, t){
   return box.map(function(p){ return p.slice(0) }) // copy points

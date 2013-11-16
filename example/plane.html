@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <style>
+    body, html{ margin: 0;}
+    path{ fill: none; stroke: gray; stroke-width: 5; }
+    circle.left-chain { fill: red; }
+    circle.right-chain { fill: blue;}
+  </style>
+  <body>
+  <script src="d3.js"></script>
+  <script src="../dz.js"></script>
+  <script>
+
+var perspective = dz.projection.perspective()
+  , cameraPos = [0, 0, 3]
+  , r = 10
+  , camera = perspective.camera().position(cameraPos).focalLength(1)
+  , w = window.innerWidth, h = window.innerHeight
+  , sin = Math.sin, cos = Math.cos, pi = Math.PI, tau = pi * 2
+  , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
+  // screen scaling
+  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
+  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
+  , svg = d3.select('body').append('svg')
+  , line = d3.svg.line()
+      .x(function(d){ return screenX(perspective.x(d)) })
+      .y(function(d){ return screenY(perspective.y(d)) })
+  , points = dz.shape.plane(35).map(dz.matrix().rotateZ(Math.PI / 2).scale(10).multiVector)
+
+
+function update(){
+  this.attr({ 
+      cx: function(d){ return screenX(perspective.x(d)) }
+    , cy: function(d){ return screenY(perspective.y(d)) }
+    ,  r: function(d){ return perspective.scale(d) * r  }
+  })
+}
+
+var circle = svg.selectAll('circle').data(points).enter().append('circle').call(update)
+
+d3.timer(function(t){
+  t = t / 1000
+  perspective.camera().position(dz.matrix().rotateY(t).rotateZ(t/2)
+    .multiVector(cameraPos))
+  circle.call(update)
+})
+
+  </script>
+  </body>
+</html>
