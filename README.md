@@ -1,20 +1,20 @@
-# DZ is A simple library for making 3D fun with D3
+# DZ is A small library for making 3D fun with D3
+
 __WARNING__: this is a _very_ new (and likely unstable) project. use as your own risk.
 
 DZ takes data in 3 dimensions and transforms it to 2 dimensions.
 
-DZ(3d) -> 2d
+    DZ(3d) -> 2d
 
-And doesn't try to do anything more than that!
+## Demos
 
-checkout these demos
-  + [dna](http://vicapow.github.io/dz/example/dna.html)
-  + [crazy cube](http://vicapow.github.io/dz/example/dot-matrix.html)
-  + [plot](http://vicapow.github.io/dz/example/plot.html)
+  + [dna double helix](http://vicapow.github.io/dz/example/dna.html)
   + [simple cube](http://vicapow.github.io/dz/example/cube.html)
-  + [euler formula](http://vicapow.github.io/dz/example/euler.html)
   + [plane](http://vicapow.github.io/dz/example/plane.html)
-  + [orbit](http://vicapow.github.io/dz/example/orbit.html)
+  + [plotting a function](http://vicapow.github.io/dz/example/plot.html)
+  + [dot cube](http://vicapow.github.io/dz/example/dot-matrix.html)
+  + [euler formula](http://vicapow.github.io/dz/example/euler.html)
+  + [rotating ball](http://vicapow.github.io/dz/example/orbit.html)
 
 ## Installation
 
