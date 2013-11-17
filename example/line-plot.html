@@ -19,7 +19,6 @@ var perspective = dz.projection.perspective()
   , w = window.innerWidth, h = window.innerHeight
   , sin = Math.sin, cos = Math.cos, pi = Math.PI, tau = pi * 2
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
-  , color = d3.scale.linear().range(['green', 'red'])
   // screen scaling
   , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
   , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
@@ -39,19 +38,8 @@ var perspective = dz.projection.perspective()
       })
     })
   , lines = linesYZ.concat(d3.transpose(linesYZ))
-
-color.domain([0, d3.max(lines, function(line){ 
-  return d3.max(line, function(p){ return p[1]; /* y */ })
-})])
-
-var path = svg.selectAll('path').data(lines).enter().append('path')
-  .attr({d: line})
-
-// var circle = svg.selectAll('circle').data(points).enter().append('circle').call(update)
-//   .style('fill', function(d){ return color(d[1]) })
-
-// var text = svg.append('text').text('plot of y = x*x + y*y')
-//   .attr({x: 30, y: 30 })
+  , path = svg.selectAll('path').data(lines).enter().append('path')
+      .attr({d: line})
 
 d3.timer(function(t){
   t = t / 5000
