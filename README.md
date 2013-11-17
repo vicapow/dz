@@ -11,7 +11,7 @@ all these demos use SVG
 
   + [function plotting with lines](http://vicapow.github.io/dz/example/line-plot.html)
   + [dna double helix](http://vicapow.github.io/dz/example/dna.html)
-  + [DOF with SVG blur](http://vicapow.github.io/dz/example/line-plot.html)
+  + [DOF with SVG blur](http://vicapow.github.io/dz/example/plane-blur.html)
   + [simple cube](http://vicapow.github.io/dz/example/cube.html)
   + [plane](http://vicapow.github.io/dz/example/plane.html)
   + [function plotting with points](http://vicapow.github.io/dz/example/plot.html)
