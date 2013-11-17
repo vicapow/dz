@@ -20,7 +20,7 @@ var perspective = dz.projection.perspective()
   , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
   , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
   // 3D geometry!!
-  , box = dz.shape.box(2, 2, 2).map(dz.matrix().scale(3).multiVector)
+  , box = dz.points.grid(2, 2, 2).map(dz.matrix().scale(3).multiVector)
   , lines = [
     // connect all the dots that have edges along the x axis
     // connect dot 0 to dot 4, connect dot 1 to dot 5, etc...

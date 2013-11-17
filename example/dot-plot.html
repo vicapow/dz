@@ -3,8 +3,7 @@
 <html>
   <style>
     body, html{ margin: 0;}
-    path{ fill: none; stroke: gray; stroke-width: 5; }
-    circle { stroke: black; stroke-width: 1;}
+    path{ fill: none; stroke: gray; stroke-width: 1; }
   </style>
   <body>
   <script src="d3.js"></script>
@@ -26,7 +25,7 @@ var perspective = dz.projection.perspective()
   , line = d3.svg.line()
       .x(function(d){ return screenX(perspective.x(d)) })
       .y(function(d){ return screenY(perspective.y(d)) })
-  , points = dz.shape.plane(22)
+  , points = dz.points.plane(22)
     .map(dz.matrix().rotateZ(Math.PI / 2).scale(1).multiVector)
 
 points.forEach(function(p){

@@ -3,6 +3,6 @@ var dz = { projection: {} }
 dz.matrix = require('./matrix')
 dz.vector = require('./vector')
 dz.projection = require('./projection')
-dz.shape = require('./shape')
+dz.points = require('./points')
 
 module.exports = dz

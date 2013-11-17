@@ -26,7 +26,7 @@ var perspective = dz.projection.perspective()
   , line = d3.svg.line()
       .x(function(d){ return screenX(perspective.x(d)) })
       .y(function(d){ return screenY(perspective.y(d)) })
-  , points = dz.shape.plane(35).map(dz.matrix().rotateZ(Math.PI / 2).scale(10).multiVector)
+  , points = dz.points.plane(35).map(dz.matrix().rotateZ(Math.PI / 2).scale(10).multiVector)
 
 
 function update(){

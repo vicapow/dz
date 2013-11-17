@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+  <style>
+    body, html{ margin: 0;}
+    path{ fill: none; stroke: gray; stroke-width: 1; }
+    circle { stroke: black; stroke-width: 1;}
+  </style>
+  <body>
+  <script src="d3.js"></script>
+  <script src="../dz.js"></script>
+  <script>
+
+var perspective = dz.projection.perspective()
+  , cameraPos = [0, 0, 40]
+  , r = 5
+  , camera = perspective.camera().position(cameraPos).lookAt([0, 0.25, 0])
+    .focalLength(1)
+  , w = window.innerWidth, h = window.innerHeight
+  , sin = Math.sin, cos = Math.cos, pi = Math.PI, tau = pi * 2
+  , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
+  , color = d3.scale.linear().range(['green', 'red'])
+  // screen scaling
+  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
+  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
+  , svg = d3.select('body').append('svg')
+  , line = d3.svg.line()
+      .x(function(d){ return screenX(perspective.x(d)) })
+      .y(function(d){ return screenY(perspective.y(d)) })
+  , res = 40 // resolution
+  , range = 40
+  , linesYZ = d3.range(- range / 2, range / 2 + 0.001, range / res)
+    .map(function(x){
+      return d3.range(- range / 2, range / 2 + 0.001, range / res).map(function(z){
+        // y = x * x + z * z
+        var r = Math.sqrt(x * x + z * z)
+        if(r === 0) r = 1e-5
+        return [x, 10 * Math.sin(r) / r, z]
+      })
+    })
+  , lines = linesYZ.concat(d3.transpose(linesYZ))
+
+color.domain([0, d3.max(lines, function(line){ 
+  return d3.max(line, function(p){ return p[1]; /* y */ })
+})])
+
+var path = svg.selectAll('path').data(lines).enter().append('path')
+  .attr({d: line})
+
+// var circle = svg.selectAll('circle').data(points).enter().append('circle').call(update)
+//   .style('fill', function(d){ return color(d[1]) })
+
+// var text = svg.append('text').text('plot of y = x*x + y*y')
+//   .attr({x: 30, y: 30 })
+
+d3.timer(function(t){
+  t = t / 5000
+  perspective.camera().position(dz.matrix().rotateY(t).rotateZ(t/2)
+    .multiVector(cameraPos))
+  path.attr({d : line}).style('stroke', function(p){ return 'red' })
+})
+
+  </script>
+  </body>
+</html>

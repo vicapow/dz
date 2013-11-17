@@ -17,9 +17,9 @@ describe('projection.perspective', function(){
       camera.position([16, 25, 82]).should.be.equal(camera, 'should return a '
         + 'reference to the original camera object')
       camera.position().should.be.eql([16, 25, 82])
-      camera.position([0, 0, 1])
+      camera.position([0, 0, 1]) // camera at x=0,y=0,z=1 looking down z axis
       var p = [1, 0, 0], pi = perspective(p)
-      ;[ pi[0], pi[1], pi[2] ].should.be.eql(p) // comma
+      ;[ pi[0], pi[1] ].should.be.eql([ p[0], p[1] ])
 
       camera.position([1, 0, 0]) // camera looking down the x axis
       p = [1, 0, 0]; pi = perspective(p) // point on the x axis
@@ -35,7 +35,7 @@ describe('projection.perspective', function(){
     describe('#lookAt', function(){
       camera.lookAt([53, 91, 3]).should.be.equal(camera, 'should return a '
           + 'reference to the original camera object')
-      camera.lookAt().should.be.eql(vector([53, 91, 3]).normalize().array())
+      camera.lookAt().should.be.eql(vector([53, 91, 3]).array())
     })
     describe('#transform', function(){
       // the transformation matrix that would take the unit camera

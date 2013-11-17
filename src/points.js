@@ -1,10 +1,10 @@
-var shape = module.exports = {}
+var points = module.exports = {}
 
 // unit circle flat against the YZ plane where `n` is the "resolution"
 // n = 1 -> a line
 // n = 2 -. a triangle
 // etc...
-shape.circle = function(n){
+points.circle = function(n){
   var t = Math.PI * 2 // tau
   return d3.range(n + 1).map(function(i){
     return [sin(i / n * t), cos(i / n * t), 0]
@@ -14,7 +14,7 @@ shape.circle = function(n){
 // construct a grid or matrix box of points where `n` is the "resolution", ie., 
 // the number of inner points
 // n = 2 -> a simple 8 point cube
-shape.box = function(nx, ny, nz){
+points.grid = function(nx, ny, nz){
   // optional arguments
   if(!nx) nx = 2
   if(!ny) ny = nx
@@ -39,4 +39,4 @@ shape.box = function(nx, ny, nz){
   return points
 }
 
-shape.plane = function(n){ return shape.box(1, n, n) }
+points.plane = function(n){ return points.grid(1, n, n) }
