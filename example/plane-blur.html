@@ -14,9 +14,9 @@
   <script>
 
 var perspective = dz.projection.perspective()
-  , cameraPos = [0, 0, 3]
-  , r = 10
-  , camera = perspective.camera().position(cameraPos).focalLength(1)
+  , cameraPos = [0, 0, 5]
+  , r = 200
+  , camera = perspective.camera().position(cameraPos).focalLength(0.3)
   , w = window.innerWidth, h = window.innerHeight
   , sin = Math.sin, cos = Math.cos, pi = Math.PI, tau = pi * 2
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
@@ -24,7 +24,10 @@ var perspective = dz.projection.perspective()
   , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
   , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
   , svg = d3.select('body').append('svg')
-  , points = dz.points.plane(35).map(dz.matrix().rotateZ(Math.PI / 2).scale(10).multiVector)
+  , filter = svg.selectAll('filter').data(d3.range(10)).enter().append("filter")
+      .attr("id", function(d){ return "blur-" + d}).append("feGaussianBlur")
+      .attr('stdDeviation', function(d){ return d}).attr('in', 'SourceGraphic')
+  , points = dz.points.plane(11).map(dz.matrix().rotateZ(Math.PI / 2).scale(7).multiVector)
 
 
 function update(){
@@ -32,13 +35,16 @@ function update(){
       cx: function(d){ return screenX(perspective.x(d)) }
     , cy: function(d){ return screenY(perspective.y(d)) }
     ,  r: function(d){ return perspective.scale(d) * r  }
+    , filter: function(d){ return 'url(#blur-' + 2 * Math.abs(5 + Math.round(perspective(d)[2])) + ')' }
+  }).call(function(){
+    console.log(perspective(this.datum())[2])
   })
 }
 
 var circle = svg.selectAll('circle').data(points).enter().append('circle').call(update)
 
 d3.timer(function(t){
-  t = t / 1000
+  t = t / 2000
   perspective.camera().position(dz.matrix().rotateY(t).rotateZ(t/2)
     .multiVector(cameraPos))
   circle.call(update)

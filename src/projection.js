@@ -16,12 +16,13 @@ projection.perspective = function(){
     if(Az === 0) Az = 0.00001
     scale = Bz / Az
     if(scale < 0) scale = 0
-    if(isNaN(ip[0])) debugger;
-    if(isNaN(ip[1])) debugger;
-    if(isNaN(ip[2])) debugger;
-    if(isNaN(scale)) debugger;
-    // return [ x, y, distance-to-the-camera, scale ]
-    return [ip[0] * scale, ip[1] * scale, ip[2] * scale, scale]
+    // return [ x, y, distance-from-the-camera-image-plane, scale ]
+    return [
+      ip[0] * scale   // x
+      , ip[1] * scale // y
+      , (ip[2] - f)   // distance from the point to the image plane 
+      , scale         // how much the point should be shrunken or enlarged
+    ]
   }
 
   perspective.x = function(p){ return perspective(p)[0] }
