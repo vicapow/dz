@@ -12,7 +12,7 @@ all these demos use SVG
   + [DOF with SVG blur](http://vicapow.github.io/dz/example/plane-blur.html)
   + [simple cube](http://vicapow.github.io/dz/example/cube.html)
   + [plane](http://vicapow.github.io/dz/example/plane.html)
-  + [function plotting with points](http://vicapow.github.io/dz/example/plot.html)
+  + [function plotting with points](http://vicapow.github.io/dz/example/dot-plot.html)
   + [point cube](http://vicapow.github.io/dz/example/dot-matrix.html)
   + [euler formula](http://vicapow.github.io/dz/example/euler.html)
   + [orbiting ball](http://vicapow.github.io/dz/example/orbit.html)
