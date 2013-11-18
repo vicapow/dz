@@ -3,7 +3,7 @@
 <html>
   <style>
     body, html{ margin: 0;}
-    path{ fill: none; stroke: gray; stroke-width: 5; }
+    path{ fill: none; stroke: gray; stroke-width: 2; }
     circle.left-chain { fill: red; }
     circle.right-chain { fill: blue;}
   </style>
@@ -14,16 +14,17 @@
 
 var perspective = dz.projection.perspective()
   , cameraPos = [0, 0, 7]
-  , r = 90
   , camera = perspective.camera().position(cameraPos).focalLength(1)
   , w = window.innerWidth, h = window.innerHeight
   , sin = Math.sin, cos = Math.cos, π = Math.PI, τ = π * 2
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
+  , r = w / 9
   , copy = function(data){ return data.slice(0) }
   // screen scaling
-  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
-  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
-  , svg = d3.select('body').append('svg')
+  , ranges = [ [0, max] , [ - diff / 2, max - diff / 2] ]
+  , screenX = d3.scale.linear().domain([-1, 1]).range(ranges[w < h ? 1 : 0])
+  , screenY = d3.scale.linear().domain([1, -1]).range(ranges[w > h ? 1 : 0])
+  , svg = d3.select('body').append('svg').attr({width: w, height: h})
   , leftHelix = helix(20).map(dz.matrix().translate([0, -π, 0]).multiVector)
   , rightHelix = leftHelix.map(copy).map(dz.matrix().rotateY(π).multiVector)
   , line = d3.svg.line()

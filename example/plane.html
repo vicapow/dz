@@ -20,10 +20,11 @@ var perspective = dz.projection.perspective()
   , w = window.innerWidth, h = window.innerHeight
   , sin = Math.sin, cos = Math.cos, pi = Math.PI, tau = pi * 2
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
-  // screen scaling
-  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
-  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
-  , svg = d3.select('body').append('svg')
+  , svg = d3.select('body').append('svg').attr({width: w, height: h})
+  // fullscreen
+  , ranges = [ [0, max] , [ - diff / 2, max - diff / 2] ]
+  , screenX = d3.scale.linear().domain([-1, 1]).range(ranges[w < h ? 1 : 0])
+  , screenY = d3.scale.linear().domain([1, -1]).range(ranges[w > h ? 1 : 0])
   , points = dz.points.plane(35).map(dz.matrix().rotateZ(Math.PI / 2).scale(10).multiVector)
 
 

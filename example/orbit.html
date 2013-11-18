@@ -11,11 +11,12 @@
 var p = dz.projection.perspective()
   , w = window.innerWidth
   , h = window.innerHeight
-  , svg = d3.select('body').append('svg')
+  , svg = d3.select('body').append('svg').attr({width: w, height: h})
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
   // screen scaling
-  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
-  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
+  , ranges = [ [0, max] , [ - diff / 2, max - diff / 2] ]
+  , screenX = d3.scale.linear().domain([-1, 1]).range(ranges[w < h ? 1 : 0])
+  , screenY = d3.scale.linear().domain([1, -1]).range(ranges[w > h ? 1 : 0])
   , dot = [1, 0, 0]
   , t = 0
   , circle = svg.append('circle').datum(dot)

@@ -3,10 +3,6 @@
 <html>
   <style>
     body, html{ margin: 0;}
-    path{ fill: none; stroke: gray; stroke-width: 5; }
-    circle.left-chain { fill: red; }
-    circle.right-chain { fill: blue;}
-    circle { filter: blur(3px); }
   </style>
   <body>
   <script src="d3.js"></script>
@@ -15,15 +11,16 @@
 
 var perspective = dz.projection.perspective()
   , cameraPos = [0, 0, 5]
-  , r = 200
   , camera = perspective.camera().position(cameraPos).focalLength(0.3)
   , w = window.innerWidth, h = window.innerHeight
   , sin = Math.sin, cos = Math.cos, pi = Math.PI, tau = pi * 2
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
+  , r = 200
   // screen scaling
-  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
-  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
-  , svg = d3.select('body').append('svg')
+  , svg = d3.select('body').append('svg').attr({width: w, height: h})
+  , ranges = [ [0, max] , [ - diff / 2, max - diff / 2] ]
+  , screenX = d3.scale.linear().domain([-1, 1]).range(ranges[w < h ? 1 : 0])
+  , screenY = d3.scale.linear().domain([1, -1]).range(ranges[w > h ? 1 : 0])
   , filter = svg.selectAll('filter').data(d3.range(10)).enter().append("filter")
       .attr("id", function(d){ return "blur-" + d}).append("feGaussianBlur")
       .attr('stdDeviation', function(d){ return d}).attr('in', 'SourceGraphic')
@@ -36,8 +33,6 @@ function update(){
     , cy: function(d){ return screenY(perspective.y(d)) }
     ,  r: function(d){ return perspective.scale(d) * r  }
     , filter: function(d){ return 'url(#blur-' + 2 * Math.abs(5 + Math.round(perspective(d)[2])) + ')' }
-  }).call(function(){
-    console.log(perspective(this.datum())[2])
   })
 }
 

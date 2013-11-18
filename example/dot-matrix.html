@@ -11,11 +11,13 @@
 var p = dz.projection.perspective()
   , w = window.innerWidth
   , h = window.innerHeight
-  , svg = d3.select('body').append('svg')
+  , r = w / 50
+  , svg = d3.select('body').append('svg').attr({width: w, height: h})
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
   // screen scaling
-  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
-  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
+  , ranges = [ [0, max] , [ - diff / 2, max - diff / 2] ]
+  , screenX = d3.scale.linear().domain([-1, 1]).range(ranges[w < h ? 1 : 0])
+  , screenY = d3.scale.linear().domain([1, -1]).range(ranges[w > h ? 1 : 0])
 
 var box = dz.points.grid(5).map(dz.matrix().scale(0.5).multiVector)
 
@@ -32,11 +34,11 @@ svg.selectAll('circle').data(transform(box, 0))
     // origin
     if(d[0] === 0 && d[1] === 0 && d[2] === 0) return 'purple'
     // x axis
-    if(d[0] > 0 && d[1] === 0 && d[2] === 0) return 'rgba(255,0,0,0.5)'
+    if(d[0] > 0 && d[1] === 0 && d[2] === 0) return 'rgba(255,0,0,0.5)' // red
     // y axis
-    if(d[0] === 0 && d[1] > 0 && d[2] === 0) return 'rgba(0,255,0,0.5)'
+    if(d[0] === 0 && d[1] > 0 && d[2] === 0) return 'rgba(0,255,0,0.5)' // green
     // z axis
-    if(d[0] === 0 && d[1] === 0 && d[2] > 0) return 'rgba(0,0,255,0.5)'
+    if(d[0] === 0 && d[1] === 0 && d[2] > 0) return 'rgba(0,0,255,0.5)' // blue
     return 'rgba(0,0,0,0.1)'
   })
 
@@ -50,7 +52,7 @@ d3.timer(function(t){
   })
   .attr('cx', function(d){ return screenX(p.x(d)) })
   .attr('cy', function(d){ return screenY(p.y(d)) })
-  .attr('r', function(d){ return p.scale(d) * 20 })
+  .attr('r', function(d){ return p.scale(d) * r })
 })
 
   </script>

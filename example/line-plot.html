@@ -20,9 +20,10 @@ var perspective = dz.projection.perspective()
   , sin = Math.sin, cos = Math.cos, pi = Math.PI, tau = pi * 2
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
   // screen scaling
-  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
-  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
-  , svg = d3.select('body').append('svg')
+  , ranges = [ [0, max] , [ - diff / 2, max - diff / 2] ]
+  , screenX = d3.scale.linear().domain([-1, 1]).range(ranges[w < h ? 1 : 0])
+  , screenY = d3.scale.linear().domain([1, -1]).range(ranges[w > h ? 1 : 0])
+  , svg = d3.select('body').append('svg').attr({width: w, height: h})
   , line = d3.svg.line()
       .x(function(d){ return screenX(perspective.x(d)) })
       .y(function(d){ return screenY(perspective.y(d)) })

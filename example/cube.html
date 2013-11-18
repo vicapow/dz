@@ -13,12 +13,13 @@
 var perspective = dz.projection.perspective()
   , camera = perspective.camera().focalLength(0.3).position([0, 0, 4])
   , w = window.innerWidth, h = window.innerHeight
-  , svg = d3.select('body').append('svg')
+  , svg = d3.select('body').append('svg').attr({width: w, height: h})
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
   , r = 40
   // screen scales
-  , screenX = d3.scale.linear().domain([-1, 1]).range([0, max])
-  , screenY = d3.scale.linear().domain([1, -1]).range([-diff/2, max + -diff/2])
+  , ranges = [ [0, max] , [ - diff / 2, max - diff / 2] ]
+  , screenX = d3.scale.linear().domain([-1, 1]).range(ranges[w < h ? 1 : 0])
+  , screenY = d3.scale.linear().domain([1, -1]).range(ranges[w > h ? 1 : 0])
   // 3D geometry!!
   , box = dz.points.grid(2, 2, 2).map(dz.matrix().scale(3).multiVector)
   , lines = [
