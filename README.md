@@ -1,7 +1,5 @@
 # DZ is A small library for making 3D fun with D3
 
-__WARNING__: this is a _very_ new (and likely unstable) project. use as your own risk.
-
 DZ takes data in 3 dimensions and transforms it to 2 dimensions.
 
     DZ(3d) -> 2d
