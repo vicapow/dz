@@ -1,11 +1,12 @@
-# DZ is A small library for making 3D fun with D3
+# DZ is A small library for making 3D easier in D3
 
 DZ takes data in 3 dimensions and transforms it to 2 dimensions.
 
     DZ(3d) -> 2d
 
 ## Demos
-all these demos use SVG
+
+these demos use SVG
 
   + [3D function plotting](http://vicapow.github.io/dz/example/line-plot.html)
   + [dna double helix](http://vicapow.github.io/dz/example/dna.html)
@@ -19,7 +20,7 @@ all these demos use SVG
 
 ## Installation
 
-just download [dz.js](https://raw.github.com/vicapow/dz/master/dz.js) and include it into your HTML
+download [dz.js](https://raw.github.com/vicapow/dz/master/dz.js) and include it into your HTML
 
 ````html
   <script src="dz.js"></script>
@@ -31,10 +32,10 @@ or, install via npm
 
 ## Example
 
-Here's a quick sample. Checkout [example/orbit.html](http://vicapow.github.io/dz/example/orbit.html) for a simple fully working demo.
+Here's a small sample. Checkout [example/orbit.html](http://vicapow.github.io/dz/example/orbit.html) for a fully working demo.
 
 ````js
-// create a new projection
+// create a new perspective projection
 var perspective = dz.projection.perspective()
 
 // and configure the camera (aka, the "eyeball")
