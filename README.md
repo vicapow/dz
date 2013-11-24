@@ -9,6 +9,7 @@ DZ takes data in 3 dimensions and transforms it to 2 dimensions.
 these demos use SVG
 
   + [3D function plotting](http://vicapow.github.io/dz/example/line-plot.html)
+  + [Teapot](http://vicapow.github.io/dz/example/teapot.html)
   + [dna double helix](http://vicapow.github.io/dz/example/dna.html)
   + [DOF with SVG blur](http://vicapow.github.io/dz/example/plane-blur.html)
   + [simple cube](http://vicapow.github.io/dz/example/cube.html)
