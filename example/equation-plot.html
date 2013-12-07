@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body{ margin: 0; }
+      path{
+        stroke: black;
+        stroke-width: 1;
+      }
+      svg{
+        display:block;
+      }
+      circle{
+        fill: white;
+      }
+      rect{
+        fill: black;
+      }
+      .equation{
+        position: absolute;
+        background: none;
+        border: none;
+        color: white;
+        outline: none;
+      }
+    </style>
+  </head>
+<body>
+  <input class="equation" type="text" value=""/>
+  <script src="d3.js"></script>
+  <script src="../dz.js"></script>
+  <script>
+var w = window.innerWidth, h = window.innerHeight
+  , svg = d3.select('body').append('svg').attr({width: w, height: h})
+  , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
+  , cos = Math.cos, sin = Math.sin, pow = Math.pow, e = Math.E
+  , pi = Math.PI
+  , ranges = [ [0, max] , [ - diff / 2, max - diff / 2] ]
+  , screenX = d3.scale.linear().domain([-1, 1]).range(ranges[w < h ? 1 : 0])
+  , screenY = d3.scale.linear().domain([1, -1]).range(ranges[w > h ? 1 : 0])
+  , p = dz.projection.perspective()
+  , camera = p.camera().focalLength(1)
+  , pos = camera.position([0, 0, 1.5]).position()
+  , n = 20
+  , eq = window.location.hash.replace(/^#/,'') || 'x * y'
+
+
+svg.append('rect').attr({width: w, height: h})
+
+var circles = svg.selectAll('circle').data(dz.points.grid(n, 1, n)).enter()
+  .append('circle')
+
+d3.timer(function(t){
+  // t = 0
+  circles
+    .sort(function(a, b){ return p.depth(a) - p.depth(b) })
+    .attr({ 
+        cx: function(d){ return screenX(p.x(d)) }
+      , cy: function(d){ return screenY(p.y(d)) }
+      ,  r: function(d){ return p.scale(d) * 4 }
+    }).style('opacity', function(d){
+      return (p.depth(d) + 2) / 1
+    })
+  camera.position(dz.matrix().rotateY(t/10000 * pi).multiVector(pos))
+})
+
+var drag = d3.behavior.drag()
+  .on('drag', function(d, i){
+    var dx = d3.event.dx / w * pi * 2
+      , dy = d3.event.dy / h * pi * 2
+    pos = dz.matrix().rotateX(dy).rotateY(dx).multiVector(pos)
+  })
+
+svg.call(drag)
+
+d3.select('.equation').on('change', function(){ update(this.value) })
+  .call(function(selector){ update(selector.node().value = eq) })
+
+function update(eq){
+  try{
+    eval('var func = function(x, y){ return ' + eq + ' }')
+    circles.data().forEach(function(d){
+      var x = d[0], z = d[1], y = d[2]
+      d[1] = z = func(x, y)
+    })
+    window.location.hash = eq
+  }catch(e){
+    console.log(e)
+  }
+}
+
+  </script>
+</body>
+</html>
