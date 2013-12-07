@@ -66,7 +66,7 @@ var w = window.innerWidth, h = window.innerHeight
   , camera = p.camera().focalLength(1)
   , pos = camera.position([0, 0.5, 1.5]).position()
   , n = 20
-  , eq = window.location.hash.replace(/^#/,'') || 'x * y'
+  , eq = decodeURIComponent(window.location.hash.replace(/^#/,'')) || 'x * y'
 
 
 svg.append('rect').attr({width: w, height: h})
@@ -98,16 +98,25 @@ var drag = d3.behavior.drag()
 svg.call(drag)
 
 d3.select('.equation').on('keyup', function(){ update(this.value) })
-.call(function(selector){ update(selector.node().value = eq) })
+.call(function(selector){
+  var el = selector.node()
+  update(el.value = eq)
+  el.focus()
+})
   //.on('keydown', function(){ update(this.value) })
 
+// these regular expressions replace 'x' and 'y' with their numerical value in 
+// the provided expression
+var reg_x = /([^A-Za-z]*)[xX]([^A-Za-z]*)/g
+var reg_y = /([^A-Za-z]*)[yY]([^A-Za-z]*)/g
 function update(eq){
   try{
     circles.data().forEach(function(d){
       var x = d[0], z = d[1], y = d[2]
-      d[1] = z = math.eval(eq.replace(/x/g, x).replace(/y/g, y))
+      var equation = eq.replace(reg_x, '$1' + x + '$2').replace(reg_y, '$1' + y + '$2')
+      d[1] = z = math.eval(equation)
     })
-    window.location.hash = eq
+    window.location.hash = encodeURIComponent(eq)
   }catch(e){
     console.log(e)
   }
