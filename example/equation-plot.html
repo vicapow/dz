@@ -67,6 +67,8 @@ var w = window.innerWidth, h = window.innerHeight
   , pos = camera.position([0, 0.5, 1.5]).position()
   , n = 20
   , eq = decodeURIComponent(window.location.hash.replace(/^#/,'')) || 'x * y'
+  , reg_x = /([^A-Za-z]*)[xX]([^A-Za-z]*)/g
+  , reg_y = /([^A-Za-z]*)[yY]([^A-Za-z]*)/g
 
 
 svg.append('rect').attr({width: w, height: h})
@@ -107,8 +109,6 @@ d3.select('.equation').on('keyup', function(){ update(this.value) })
 
 // these regular expressions replace 'x' and 'y' with their numerical value in 
 // the provided expression
-var reg_x = /([^A-Za-z]*)[xX]([^A-Za-z]*)/g
-var reg_y = /([^A-Za-z]*)[yY]([^A-Za-z]*)/g
 function update(eq){
   try{
     circles.data().forEach(function(d){
