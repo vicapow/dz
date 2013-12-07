@@ -2,7 +2,11 @@
 <html>
   <head>
     <style>
-      body{ margin: 0; }
+      body{ 
+        margin: 0;
+        font-family: helvetica;
+        overflow: hidden;
+      }
       path{
         stroke: black;
         stroke-width: 1;
@@ -17,31 +21,50 @@
         fill: black;
       }
       .equation{
-        position: absolute;
         background: none;
         border: none;
         color: white;
         outline: none;
+        font-size: inherit;
+        position: absolute;
+        top: 0;
         width: 100%;
+        margin: 0;
+        padding: 0;
+        padding-left: 10px;
+      }
+      .toolbar{
+        overflow: hidden;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        color: white;
+        font-size: 30px;
+        margin: 0;
+        padding: 0;
       }
     </style>
   </head>
 <body>
-  <input class="equation" type="text" value=""/>
+  <div class="toolbar">
+    z = <input class="equation" type="text" value=""/>
+  </div>
   <script src="d3.js"></script>
+  <script src="math.js"></script>
   <script src="../dz.js"></script>
   <script>
 var w = window.innerWidth, h = window.innerHeight
+  , math = mathjs()
   , svg = d3.select('body').append('svg').attr({width: w, height: h})
   , max = Math.max(w, h), min = Math.min(w, h), diff = max - min
-  , cos = Math.cos, sin = Math.sin, pow = Math.pow, e = Math.E
   , pi = Math.PI
   , ranges = [ [0, max] , [ - diff / 2, max - diff / 2] ]
   , screenX = d3.scale.linear().domain([-1, 1]).range(ranges[w < h ? 1 : 0])
   , screenY = d3.scale.linear().domain([1, -1]).range(ranges[w > h ? 1 : 0])
   , p = dz.projection.perspective()
   , camera = p.camera().focalLength(1)
-  , pos = camera.position([0, 0, 1.5]).position()
+  , pos = camera.position([0, 0.5, 1.5]).position()
   , n = 20
   , eq = window.location.hash.replace(/^#/,'') || 'x * y'
 
@@ -74,15 +97,15 @@ var drag = d3.behavior.drag()
 
 svg.call(drag)
 
-d3.select('.equation').on('change', function(){ update(this.value) })
-  .call(function(selector){ update(selector.node().value = eq) })
+d3.select('.equation').on('keyup', function(){ update(this.value) })
+.call(function(selector){ update(selector.node().value = eq) })
+  //.on('keydown', function(){ update(this.value) })
 
 function update(eq){
   try{
-    eval('var func = function(x, y){ return ' + eq + ' }')
     circles.data().forEach(function(d){
       var x = d[0], z = d[1], y = d[2]
-      d[1] = z = func(x, y)
+      d[1] = z = math.eval(eq.replace(/x/g, x).replace(/y/g, y))
     })
     window.location.hash = eq
   }catch(e){
