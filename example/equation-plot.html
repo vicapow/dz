@@ -65,7 +65,7 @@ var w = window.innerWidth, h = window.innerHeight
   , p = dz.projection.perspective()
   , camera = p.camera().focalLength(1)
   , pos = camera.position([0, 0.5, 1.5]).position()
-  , n = 20, prev_n = 0
+  , n = 30, prev_n = 0
   , eq = decodeURIComponent(window.location.hash.replace(/^#/,'')) || 'x * y'
   , prev_eq
   , r = 4
@@ -90,6 +90,8 @@ d3.timer(function(t){
   dt = t - prev_t; prev_t = t
   if(n !== prev_n) update_circles()
   circles
+    // depth sort
+    // .sort(function(a, b){ return p.depth(a) - p.depth(b) })
     .attr({ 
         cx: function(d){ return screenX(p.x(d)) }
       , cy: function(d){ return screenY(p.y(d)) }
@@ -108,12 +110,41 @@ var drag = d3.behavior.drag()
 
 svg.call(drag)
 
-d3.select('.equation').on('keyup', function(){ equation(this.value) })
+d3.select('.equation').on('keyup', function(){ })
+.on('keydown', function(){
+  var change = 0
+  if(d3.event.keyIdentifier === 'Down') change = -1
+  else if(d3.event.keyIdentifier === 'Up') change = 1
+  if(change !== 0){
+    var pos = this.selectionStart
+    this.value = updateNumbetInString(this.value, pos, change)
+    this.selectionEnd = this.selectionStart = pos
+    d3.event.preventDefault()
+  }
+  eq = equation(this.value)
+})
 .call(function(selector){
   var el = selector.node()
   el.value = equation(eq)
   el.focus()
 })
+
+
+var digit = /(\d|\.|\-)/
+function updateNumbetInString(string, pos, change){
+  if(pos === string.length) pos = pos - 1
+  if(!string[pos].match(digit)){
+    if(string[pos-1].match(digit)) pos--
+    else if(string[pos+1].match(digit)) pos++
+    else return string
+  }
+  var l = pos, r = pos
+  while(l-1 >= 0 && string[l-1].match(digit)) l--
+  while(r+1 < string.length && string[r+1].match(digit)) r++
+  var num = Number(string.substring(l, r + 1))
+  num = num + change
+  return string.substring(0, l) + num + string.substring(r + 1)
+}
   //.on('keydown', function(){ update(this.value) })
 
 // these regular expressions replace 'x' and 'y' with their numerical value in 
@@ -124,14 +155,11 @@ function equation(eq){
   try{
     circles.data().forEach(function(d){
       var x = d[0], z = d[1], y = d[2]
-      var equation = 'x= ' + d[0] + '; y=' + y + '; ' + eq
-      d[1] = z = math.eval(equation)
+      var equation = 'x= ' + x + '; y=' + y + '; ' + eq
+      d[1] = z = math.eval(equation)[0]
     })
     window.location.hash = encodeURIComponent(eq)
-  }catch(e){
-    console.log(e)
-    return ''
-  }
+  }catch(e){ return '' }
   return eq
 }
 
