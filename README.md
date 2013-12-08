@@ -2,7 +2,7 @@
 
 <div style="float: right">
   ![](logo.png)
-  (logo by [aneesh](https://github.com/abhoopathy?tab=repositories))
+  (logo by [aneesh](https://github.com/abhoopathy))
 </div>
 
 DZ takes data in 3 dimensions and transforms it to 2 dimensions.
@@ -24,6 +24,7 @@ DZ works well with D3
   + [point cube](http://vicapow.github.io/dz/example/dot-matrix.html)
   + [euler formula](http://vicapow.github.io/dz/example/euler.html)
   + [orbiting ball](http://vicapow.github.io/dz/example/orbit.html)
+
 
 ## Installation
 
