@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <style>
       body{ 
         margin: 0;
         font-family: helvetica;
-        overflow: hidden;
       }
       path{
         stroke: black;
@@ -65,29 +65,38 @@ var w = window.innerWidth, h = window.innerHeight
   , p = dz.projection.perspective()
   , camera = p.camera().focalLength(1)
   , pos = camera.position([0, 0.5, 1.5]).position()
-  , n = 20
+  , n = 20, prev_n = 0
   , eq = decodeURIComponent(window.location.hash.replace(/^#/,'')) || 'x * y'
-  , reg_x = /([^A-Za-z]*)[xX]([^A-Za-z]*)/g
-  , reg_y = /([^A-Za-z]*)[yY]([^A-Za-z]*)/g
-
+  , prev_eq
+  , r = 4
+  , circles
+  , rotate = true
+  , dt = 0, prev_t = 0
 
 svg.append('rect').attr({width: w, height: h})
 
-var circles = svg.selectAll('circle').data(dz.points.grid(n, 1, n)).enter()
+function update_circles(){
+  svg.selectAll('circle').remove()
+  circles = svg.selectAll('circle').data(dz.points.grid(n, 1, n)).enter()
   .append('circle')
+  prev_n = n
+  prev_eq = ''
+  eq = equation(eq) // update data based on current equation
+}
+
+update_circles(); prev_n = n
 
 d3.timer(function(t){
-  // t = 0
+  dt = t - prev_t; prev_t = t
+  if(n !== prev_n) update_circles()
   circles
-    .sort(function(a, b){ return p.depth(a) - p.depth(b) })
     .attr({ 
         cx: function(d){ return screenX(p.x(d)) }
       , cy: function(d){ return screenY(p.y(d)) }
-      ,  r: function(d){ return p.scale(d) * 4 }
-    }).style('opacity', function(d){
-      return (p.depth(d) + 2) / 1
-    })
-  camera.position(dz.matrix().rotateY(t/10000 * pi).multiVector(pos))
+      ,  r: function(d){ return p.scale(d) * r }
+    }).style('opacity', function(d){ return (p.depth(d) + 2) / 1 })
+  if(rotate) pos = dz.matrix().rotateY(pi/10000 * dt).multiVector(pos)
+  camera.position(pos)
 })
 
 var drag = d3.behavior.drag()
@@ -99,27 +108,31 @@ var drag = d3.behavior.drag()
 
 svg.call(drag)
 
-d3.select('.equation').on('keyup', function(){ update(this.value) })
+d3.select('.equation').on('keyup', function(){ equation(this.value) })
 .call(function(selector){
   var el = selector.node()
-  update(el.value = eq)
+  el.value = equation(eq)
   el.focus()
 })
   //.on('keydown', function(){ update(this.value) })
 
 // these regular expressions replace 'x' and 'y' with their numerical value in 
 // the provided expression
-function update(eq){
+function equation(eq){
+  if(eq === prev_eq) return eq
+  prev_eq = eq
   try{
     circles.data().forEach(function(d){
       var x = d[0], z = d[1], y = d[2]
-      var equation = eq.replace(reg_x, '$1' + x + '$2').replace(reg_y, '$1' + y + '$2')
+      var equation = 'x= ' + d[0] + '; y=' + y + '; ' + eq
       d[1] = z = math.eval(equation)
     })
     window.location.hash = encodeURIComponent(eq)
   }catch(e){
     console.log(e)
+    return ''
   }
+  return eq
 }
 
   </script>
