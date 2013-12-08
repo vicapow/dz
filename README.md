@@ -1,7 +1,9 @@
 # DZ is A small library to help manipulate and project 3D data
 
-![](logo.png)
-(logo by [aneesh](https://github.com/abhoopathy?tab=repositories))
+<div style="float: right">
+  ![](logo.png)
+  (logo by [aneesh](https://github.com/abhoopathy?tab=repositories))
+</div>
 
 DZ takes data in 3 dimensions and transforms it to 2 dimensions.
 
