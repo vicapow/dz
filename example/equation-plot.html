@@ -33,6 +33,9 @@
         padding: 0;
         padding-left: 10px;
       }
+      .equation.invalid{
+        color: red;
+      }
       .toolbar{
         overflow: hidden;
         position: absolute;
@@ -44,7 +47,13 @@
         margin: 0;
         padding: 0;
       }
+      .twitter-btn{
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+      }
     </style>
+    <title>3d function plotting experiment in d3 with dz</title>
   </head>
 <body>
   <div class="toolbar">
@@ -110,7 +119,9 @@ var drag = d3.behavior.drag()
 
 svg.call(drag)
 
-d3.select('.equation').on('keyup', function(){ })
+d3.select('.equation').on('keyup', function(){
+  eq = equation(this.value)
+})
 .on('keydown', function(){
   var change = 0
   if(d3.event.keyIdentifier === 'Down') change = -1
@@ -120,8 +131,8 @@ d3.select('.equation').on('keyup', function(){ })
     this.value = updateNumbetInString(this.value, pos, change)
     this.selectionEnd = this.selectionStart = pos
     d3.event.preventDefault()
+    eq = equation(this.value)
   }
-  eq = equation(this.value)
 })
 .call(function(selector){
   var el = selector.node()
@@ -145,7 +156,6 @@ function updateNumbetInString(string, pos, change){
   num = num + change
   return string.substring(0, l) + num + string.substring(r + 1)
 }
-  //.on('keydown', function(){ update(this.value) })
 
 // these regular expressions replace 'x' and 'y' with their numerical value in 
 // the provided expression
@@ -159,10 +169,18 @@ function equation(eq){
       d[1] = z = math.eval(equation)[0]
     })
     window.location.hash = encodeURIComponent(eq)
-  }catch(e){ return '' }
+  }catch(e){
+    d3.select('.equation').classed('invalid', true)
+    return eq
+  }
+  d3.select('.equation').classed('invalid', false)
   return eq
 }
 
   </script>
+  <div class="twitter-btn">
+  <a href="https://twitter.com/share" class="twitter-share-button" data-via="vicapow">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+  </div>
 </body>
 </html>
