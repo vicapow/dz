@@ -3,7 +3,7 @@
 <div style="float: right;">
   <img src="logo.png">
   <br>
-  <span>logo by aneesh (https://github.com/abhoopathy?tab=repositories)</span>
+  <span>logo by aneesh (https://github.com/abhoopathy)</span>
 </div>
 
 DZ takes data in 3 dimensions and transforms it to 2 dimensions.
